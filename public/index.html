@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>國際影響力策略｜AI × 永續貿易工具</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand-yellow: #FFD600;
+    --brand-orange: #FF7200;
+    --brand-red: #E84000;
+    --brand-gradient: linear-gradient(135deg, #FFD600, #FF7200, #E84000);
+    --purple: #6E5AF0;
+    --bg: #080814;
+    --card: rgba(255,255,255,0.02);
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,114,0,0.3);
+    --white: #FFFFFF;
+    --gray: #C2C2D6;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 17px;
+    line-height: 1.85;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    text-decoration: none;
+  }
+  .nav-logo img {
+    height: 36px;
+    width: auto;
+  }
+  .nav-logo-divider {
+    width: 1px;
+    height: 20px;
+    background: var(--border);
+  }
+  .nav-sub {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gray);
+    text-transform: uppercase;
+  }
+  .nav-links {
+    display: flex;
+    gap: 32px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: #C8C8E0;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--brand-orange); }
+
+  /* HERO */
+  .hero {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 96px 40px 80px;
+    text-align: center;
+  }
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1.5px solid var(--brand-orange);
+    border-radius: 999px;
+    padding: 6px 18px;
+    margin-bottom: 32px;
+  }
+  .hero-badge-dot {
+    width: 7px; height: 7px;
+    background: var(--brand-gradient);
+    border-radius: 50%;
+  }
+  .hero-badge span {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--brand-orange);
+    letter-spacing: 2px;
+    text-transform: uppercase;
+  }
+  .hero h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(36px, 5vw, 56px);
+    font-weight: 800;
+    line-height: 1.75;
+    margin-bottom: 24px;
+  }
+  .gradient-text {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .hero p {
+    font-size: 19px;
+    color: #C8C8DC;
+    line-height: 1.9;
+    max-width: 620px;
+    margin: 0 auto 48px;
+  }
+
+  /* TOOLS GRID */
+  .tools-section {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 40px 96px;
+  }
+  .section-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--brand-orange);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 32px;
+    text-align: center;
+  }
+  .tools-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
+    gap: 24px;
+  }
+  .tool-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+    transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  }
+  .tool-card:hover {
+    background: rgba(255,255,255,0.04);
+    border-color: var(--border-hover);
+    transform: translateY(-2px);
+  }
+  .tool-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    margin-bottom: 20px;
+  }
+  .icon-232 { background: rgba(255,114,0,0.15); }
+  .icon-cbam { background: rgba(110,90,240,0.15); }
+  .tool-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    padding: 5px 12px;
+    border-radius: 999px;
+    margin-bottom: 16px;
+    display: inline-block;
+  }
+  .tag-us { background: rgba(255,114,0,0.15); color: var(--brand-orange); }
+  .tag-eu { background: rgba(201,168,76,0.15); color: #C9A84C; }
+  .tool-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    line-height: 1.3;
+  }
+  .tool-card p {
+    font-size: 17px;
+    color: #C8C8E0;
+    line-height: 1.9;
+    margin-bottom: 24px;
+  }
+  .tool-cta {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--brand-orange);
+    letter-spacing: 1px;
+  }
+  .tool-cta-eu { color: #C9A84C; }
+  .tool-cta svg { transition: transform 0.2s; }
+  .tool-card:hover .tool-cta svg { transform: translateX(4px); }
+
+  /* DIVIDER */
+  .gold-divider {
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,114,0,0.3), transparent);
+    margin: 0 40px;
+  }
+
+  /* ABOUT */
+  .about-section {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 80px 40px;
+    text-align: center;
+  }
+  .about-section h3 {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+  }
+  .about-section p {
+    font-size: 17px;
+    color: var(--gray);
+    line-height: 1.9;
+    margin-bottom: 16px;
+  }
+  .tags-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin: 28px 0 36px;
+  }
+  .tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    padding: 7px 16px;
+    border-radius: 999px;
+    border: 1px solid rgba(255,255,255,0.2);
+    color: #C8C8E0;
+  }
+  .btn-primary {
+    display: inline-block;
+    background: var(--brand-gradient);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 14px 36px;
+    border-radius: 999px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-primary:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 32px 40px;
+    text-align: center;
+  }
+  footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: #B8B8D4;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .nav-links { display: none; }
+    .hero { padding: 64px 20px 48px; }
+    .tools-section { padding: 0 20px 64px; }
+    .tools-grid { grid-template-columns: 1fr; }
+    .about-section { padding: 64px 20px; }
+    footer { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-logo" href="index.html">
+    <img src="ahbase-logo.png" alt="覺心營">
+    <div class="nav-logo-divider"></div>
+    <span class="nav-sub">Impact Trade AI</span>
+  </a>
+  <ul class="nav-links">
+    <li><a href="#tools">工具</a></li>
+    <li><a href="#about">關於</a></li>
+    <li><a href="mailto:jessie@ahbase.com">諮詢</a></li>
+  </ul>
+</nav>
+
+<section class="hero">
+  <div class="hero-badge">
+    <div class="hero-badge-dot"></div>
+    <span>AI × 永續 · 國際</span>
+  </div>
+  <h1>
+    看懂國際政策衝擊<br>
+    <span class="gradient-text">用 AI 工具做出決策</span>
+  </h1>
+  <p>
+    全球貿易規則正在快速改變。美國 232 關稅、歐盟 CBAM 碳邊境稅——
+    這些政策已經在影響你的出口成本，算清楚才知道怎麼應變。
+  </p>
+</section>
+
+<section class="tools-section" id="tools">
+  <p class="section-label">免費分析工具</p>
+  <div class="tools-grid">
+
+    <a class="tool-card" href="232-calculator.html">
+      <div class="tool-icon icon-232">🇺🇸</div>
+      <span class="tool-tag tag-us">美國市場</span>
+      <h2>232 關稅衝擊計算器</h2>
+      <p>
+        2026/4/6 起，美國鋼鋁關稅計算方式大改。
+        同樣的產品，最高多付 3 倍關稅。
+        輸入你的產品資訊，即時算出新舊制差異。
+      </p>
+      <div class="tool-cta">
+        立即計算
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="#FF7200" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </a>
+
+    <a class="tool-card" href="https://cbam-taiwan.netlify.app" target="_blank">
+      <div class="tool-icon icon-cbam" style="background:rgba(201,168,76,0.15)">🇪🇺</div>
+      <span class="tool-tag tag-eu">歐盟市場</span>
+      <h2>CBAM 碳邊境稅計算器</h2>
+      <p>
+        2026 年起，出口到歐盟的高碳排產品須繳碳關稅。
+        鋼鐵、水泥、鋁、化肥、電力首當其衝。
+        計算你的產品碳成本，提前佈局。
+      </p>
+      <div class="tool-cta tool-cta-eu">
+        立即計算
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="#C9A84C" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </div>
+    </a>
+
+  </div>
+</section>
+
+<div class="gold-divider"></div>
+
+<section class="about-section" id="about">
+  <h3>影響有影響力的領袖</h3>
+  <p>
+    我是 Jessie Chang，覺心營股份有限公司 執行長、劍橋大學永續領導力碩士班、Asia Impact Nexus 台灣負責人。
+    我相信 AI 可以幫助每一個中小企業主，強化跨國企業的視野和決策。
+  </p>
+  <div class="tags-row">
+    <span class="tag">AI</span>
+    <span class="tag">永續發展</span>
+    <span class="tag">國際品牌</span>
+    <span class="tag">企業教練</span>
+    <span class="tag">Asia Impact Nexus</span>
+  </div>
+  <a class="btn-primary" href="mailto:jessie@ahbase.com">預約免費諮詢 →</a>
+</section>
+
+<footer>
+  <p>© 2026 覺心營股份有限公司 · Impact Trade AI · 工具免費使用，歡迎分享</p>
+</footer>
+
+</body>
+</html>

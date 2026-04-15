@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>232 關稅衝擊計算器｜新舊制對比</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Syne:wght@700;800&family=Noto+Sans+TC:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --brand-yellow: #FFD600;
+    --brand-orange: #FF7200;
+    --brand-red: #E84000;
+    --brand-gradient: linear-gradient(135deg, #FFD600, #FF7200, #E84000);
+    --green: #22C55E;
+    --bg: #080814;
+    --card: rgba(255,255,255,0.02);
+    --card-elevated: rgba(255,255,255,0.04);
+    --border: rgba(255,255,255,0.08);
+    --border-hover: rgba(255,114,0,0.3);
+    --white: #FFFFFF;
+    --gray: #C2C2D6;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--white);
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 17px;
+    line-height: 1.85;
+    min-height: 100vh;
+  }
+
+  /* NAV */
+  nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 40px;
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-back {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: var(--gray);
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .nav-back:hover { color: var(--brand-orange); }
+  .nav-logo {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    text-decoration: none;
+  }
+  .nav-logo img {
+    height: 32px;
+    width: auto;
+  }
+  .nav-logo-divider {
+    width: 1px;
+    height: 18px;
+    background: rgba(255,255,255,0.12);
+  }
+  .nav-sub {
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    letter-spacing: 2px;
+    color: var(--gray);
+    text-transform: uppercase;
+  }
+
+  /* HERO */
+  .page-header {
+    max-width: 760px;
+    margin: 0 auto;
+    padding: 64px 40px 48px;
+    text-align: center;
+  }
+  .page-tag {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--brand-orange);
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    margin-bottom: 16px;
+  }
+  .page-header h1 {
+    font-family: 'Syne', sans-serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 800;
+    line-height: 1.75;
+    margin-bottom: 16px;
+  }
+  .gradient-text {
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .page-header p {
+    font-size: 18px;
+    color: var(--gray);
+    line-height: 1.9;
+  }
+
+  /* ALERT BAR */
+  .alert-bar {
+    max-width: 760px;
+    margin: 0 auto 40px;
+    padding: 0 40px;
+  }
+  .alert-inner {
+    background: linear-gradient(135deg, rgba(255,114,0,0.1), rgba(232,64,0,0.1));
+    border: 1px solid rgba(255,114,0,0.3);
+    border-radius: 12px;
+    padding: 14px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .alert-dot {
+    width: 8px; height: 8px;
+    background: var(--brand-orange);
+    border-radius: 50%;
+    flex-shrink: 0;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+  .alert-inner span {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--brand-orange);
+  }
+
+  /* MAIN LAYOUT */
+  .main {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 0 40px 80px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+
+  /* CALCULATOR CARD */
+  .calc-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+  }
+  .calc-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+
+  .field-group { margin-bottom: 20px; }
+  .field-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: #E8E8F4;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    display: block;
+  }
+  .field-hint {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: #B0B0CC;
+    margin-top: 6px;
+    line-height: 1.7;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 12px 16px;
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    outline: none;
+    transition: border-color 0.2s;
+    -webkit-appearance: none;
+  }
+  input[type="number"]:focus, select:focus {
+    border-color: var(--brand-orange);
+  }
+  input[type="number"]::placeholder { color: rgba(160,160,184,0.4); }
+  select option { background: #0f0f22; color: var(--white); }
+
+  .input-prefix {
+    position: relative;
+  }
+  .input-prefix span {
+    position: absolute;
+    left: 14px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: var(--gray);
+    pointer-events: none;
+  }
+  .input-prefix input { padding-left: 36px; }
+
+  .btn-calc {
+    width: 100%;
+    background: var(--brand-gradient);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    font-size: 16px;
+    font-weight: 700;
+    padding: 15px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+    transition: opacity 0.2s, transform 0.2s;
+    margin-top: 8px;
+  }
+  .btn-calc:hover { opacity: 0.9; transform: translateY(-1px); }
+  .btn-calc:active { transform: scale(0.98); }
+
+  /* RESULTS CARD */
+  .result-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px;
+    position: sticky;
+    top: 24px;
+  }
+  .result-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: 28px;
+  }
+
+  .result-empty {
+    text-align: center;
+    padding: 48px 0;
+  }
+  .result-empty p {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    color: rgba(194,194,214,0.7);
+    line-height: 1.7;
+  }
+
+  .result-content { display: none; }
+  .result-content.visible { display: block; }
+  .result-empty.hidden { display: none; }
+
+  .result-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 14px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .result-row:last-of-type { border-bottom: none; }
+  .result-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    color: #C8C8E0;
+  }
+  .result-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 17px;
+    font-weight: 700;
+  }
+  .val-old { color: var(--gray); }
+  .val-new { color: var(--brand-orange); }
+
+  .result-highlight {
+    background: rgba(232,64,0,0.08);
+    border: 1px solid rgba(232,64,0,0.2);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 20px 0;
+    text-align: center;
+  }
+  .result-highlight .diff-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: #C8C8E0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .result-highlight .diff-amount {
+    font-family: 'Syne', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    background: var(--brand-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+  .result-highlight .diff-pct {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    color: var(--brand-orange);
+    margin-top: 6px;
+  }
+
+  .annex-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    border-radius: 999px;
+    padding: 6px 14px;
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    font-weight: 700;
+  }
+  .annex-a { background: rgba(232,64,0,0.15); color: #E84000; }
+  .annex-b { background: rgba(255,114,0,0.15); color: var(--brand-orange); }
+  .annex-c { background: rgba(34,197,94,0.15); color: var(--green); }
+  .annex-d { background: rgba(110,90,240,0.15); color: #9D8FF5; }
+
+  /* REFUND ELIGIBILITY */
+  .eligibility-box {
+    background: rgba(255,255,255,0.02);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 16px;
+    margin-top: 16px;
+  }
+  .eligibility-box .elig-title {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: #C8C8E0;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    margin-bottom: 12px;
+  }
+  .elig-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    margin-bottom: 12px;
+    font-size: 16px;
+    line-height: 1.75;
+    color: #D8D8EE;
+  }
+  .elig-item:last-child { margin-bottom: 0; }
+  .elig-dot { font-size: 15px; flex-shrink: 0; margin-top: 2px; }
+
+  /* EMAIL CAPTURE */
+  .email-card {
+    grid-column: 1 / -1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 40px;
+  }
+  .email-card h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  .email-card > p {
+    font-size: 17px;
+    color: var(--gray);
+    margin-bottom: 28px;
+    line-height: 1.9;
+  }
+
+  .survey-question {
+    margin-bottom: 24px;
+  }
+  .survey-q-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--white);
+    margin-bottom: 14px;
+    display: block;
+  }
+  .survey-options {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 10px;
+  }
+  .survey-option {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    padding: 14px 16px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    cursor: pointer;
+    transition: border-color 0.2s, background 0.2s;
+  }
+  .survey-option:hover {
+    border-color: var(--border-hover);
+    background: var(--card-elevated);
+  }
+  .survey-option input[type="radio"] {
+    width: auto;
+    accent-color: var(--brand-orange);
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+  .survey-option label {
+    font-size: 16px;
+    color: #C8C8E0;
+    cursor: pointer;
+    line-height: 1.6;
+  }
+  .survey-option.selected {
+    border-color: var(--brand-orange);
+    background: rgba(255,114,0,0.05);
+  }
+  .survey-option.selected label { color: var(--white); }
+
+  .email-row {
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+  }
+  .email-row input[type="email"] {
+    flex: 1;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 18px;
+    color: var(--white);
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+  .email-row input[type="email"]:focus { border-color: var(--brand-orange); }
+  .email-row input[type="email"]::placeholder { color: rgba(160,160,184,0.4); }
+  .btn-submit {
+    background: var(--brand-gradient);
+    color: var(--white);
+    font-family: 'Syne', sans-serif;
+    font-size: 14px;
+    font-weight: 700;
+    padding: 14px 28px;
+    border-radius: 999px;
+    border: none;
+    cursor: pointer;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-submit:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  .email-note {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: rgba(194,194,214,0.75);
+    margin-top: 10px;
+  }
+
+  .success-msg {
+    display: none;
+    background: rgba(34,197,94,0.08);
+    border: 1px solid rgba(34,197,94,0.2);
+    border-radius: 12px;
+    padding: 20px 24px;
+    text-align: center;
+  }
+  .success-msg p {
+    font-family: 'Space Mono', monospace;
+    font-size: 15px;
+    color: var(--green);
+    line-height: 1.7;
+  }
+
+  /* SIMULATOR */
+  .simulator-card {
+    grid-column: 1 / -1;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 20px;
+    padding: 36px 40px;
+    display: none;
+  }
+  .sim-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+    gap: 16px;
+  }
+  .sim-header h2 {
+    font-family: 'Syne', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+  }
+  .slider-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .slider-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: #C8C8E0;
+    white-space: nowrap;
+  }
+  #margin-slider {
+    width: 140px;
+    accent-color: #FF7200;
+    cursor: pointer;
+    height: 4px;
+  }
+  .slider-value {
+    font-family: 'Space Mono', monospace;
+    font-size: 16px;
+    font-weight: 700;
+    color: #FF7200;
+    min-width: 44px;
+  }
+  .sim-metrics {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+  .sim-metric {
+    background: rgba(255,255,255,0.03);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+  .sim-metric-value {
+    font-family: 'Syne', sans-serif;
+    font-size: 28px;
+    font-weight: 700;
+    color: #FF7200;
+    margin-bottom: 6px;
+    transition: color 0.3s;
+  }
+  .sim-metric-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #C8C8E0;
+  }
+  .sim-warning {
+    background: rgba(239,68,68,0.1);
+    border: 1px solid rgba(239,68,68,0.35);
+    border-radius: 10px;
+    padding: 14px 20px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .sim-warning span {
+    font-family: 'Space Mono', monospace;
+    font-size: 14px;
+    color: #EF4444;
+    line-height: 1.7;
+  }
+  .sim-chart {
+    margin: 20px 0;
+  }
+  .chart-bars {
+    display: flex;
+    gap: 40px;
+    align-items: flex-end;
+    height: 240px;
+    padding: 0 40px;
+    border-bottom: 2px solid rgba(255,255,255,0.1);
+    justify-content: center;
+  }
+  .chart-bar-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    max-width: 100px;
+  }
+  .bar-col {
+    width: 100%;
+    display: flex;
+    flex-direction: column-reverse;
+    border-radius: 6px 6px 0 0;
+    overflow: hidden;
+    transition: all 0.4s ease;
+  }
+  .bar-col div { transition: height 0.4s ease; }
+  .bar-label {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #C8C8E0;
+    text-align: center;
+    line-height: 1.6;
+    padding-top: 6px;
+  }
+  .bar-label small { font-size: 11px; color: #9090B0; display: block; }
+  .chart-legend {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-top: 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: #C8C8E0;
+  }
+  .legend-dot {
+    width: 10px; height: 10px;
+    border-radius: 2px;
+    flex-shrink: 0;
+  }
+  .sim-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    background: rgba(255,114,0,0.06);
+    border: 1px solid rgba(255,114,0,0.2);
+    border-radius: 12px;
+    padding: 16px 24px;
+    margin-top: 24px;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .sim-cta p { font-size: 16px; color: #D8D8EE; line-height: 1.5; }
+  .sim-cta p strong { color: #FF7200; }
+  .btn-sim-cta {
+    background: var(--brand-gradient);
+    color: #FFFFFF;
+    font-family: 'Syne', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    padding: 12px 24px;
+    border-radius: 999px;
+    text-decoration: none;
+    letter-spacing: 1px;
+    white-space: nowrap;
+    transition: opacity 0.2s, transform 0.2s;
+  }
+  .btn-sim-cta:hover { opacity: 0.9; transform: translateY(-1px); }
+
+  /* FOOTER */
+  footer {
+    border-top: 1px solid var(--border);
+    padding: 28px 40px;
+    text-align: center;
+    max-width: 960px;
+    margin: 0 auto;
+  }
+  footer p {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #B8B8D4;
+  }
+
+  @media (max-width: 768px) {
+    nav { padding: 16px 20px; }
+    .page-header { padding: 48px 20px 32px; }
+    .alert-bar { padding: 0 20px; }
+    .main { grid-template-columns: 1fr; padding: 0 20px 64px; }
+    .result-card { position: static; }
+    .simulator-card { grid-column: 1; padding: 24px 20px; }
+    .sim-header { flex-direction: column; align-items: flex-start; }
+    .sim-metrics { grid-template-columns: 1fr; }
+    .chart-bars { gap: 20px; padding: 0 10px; }
+    .email-card { grid-column: 1; padding: 28px 20px; }
+    .email-row { flex-direction: column; }
+    .btn-submit { width: 100%; text-align: center; }
+    .sim-cta { flex-direction: column; }
+    footer { padding: 24px 20px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <a class="nav-back" href="index.html">← 回到工具列表</a>
+  <a class="nav-logo" href="index.html">
+    <img src="ahbase-logo.png" alt="覺心營">
+    <div class="nav-logo-divider"></div>
+    <span class="nav-sub">Impact Trade AI</span>
+  </a>
+</nav>
+
+<div class="page-header">
+  <p class="page-tag">美國 232 條款｜2026/4/6 生效</p>
+  <h1>你的產品<br><span class="gradient-text">多付了多少關稅？</span></h1>
+  <p>新制將關稅基礎從「鋼鐵材料成本」改為「整個產品售價」，部分產品稅額暴增 3 倍以上。輸入你的數字，立即算清楚。</p>
+</div>
+
+<div class="alert-bar">
+  <div class="alert-inner">
+    <div class="alert-dot"></div>
+    <span>2026/4/6 正式生效・立即執行・無緩衝期・台灣不在退稅資格名單</span>
+  </div>
+</div>
+
+<div class="main">
+
+  <!-- CALCULATOR -->
+  <div class="calc-card">
+    <h2>輸入產品資訊</h2>
+
+    <div class="field-group">
+      <label class="field-label" for="product-price">產品出口售價（USD）</label>
+      <div class="input-prefix">
+        <span>$</span>
+        <input type="number" id="product-price" placeholder="100.00" min="0" step="0.01">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="steel-cost">產品中的鋼/鋁材料成本（USD）</label>
+      <div class="input-prefix">
+        <span>$</span>
+        <input type="number" id="steel-cost" placeholder="30.00" min="0" step="0.01">
+      </div>
+      <p class="field-hint">不確定可估算：鋼材佔整個產品的成本比例 × 售價</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="product-category">產品分類（Annex）</label>
+      <select id="product-category">
+        <option value="" disabled selected>選擇分類...</option>
+        <option value="A">Annex I-A — 純鋼製品（鋼板、型鋼、鋼線）稅率 50%</option>
+        <option value="B">Annex I-B — 鋼衍生製品・機械設備（HS 84-87 章）稅率 25%</option>
+        <option value="C">Annex II — 純鋁製品（鋁錠、鋁板、鋁型材）稅率 50%</option>
+        <option value="D">Annex III — 鋁衍生製品（含鋁機械設備、汽車零件）稅率 25%</option>
+      </select>
+      <p class="field-hint">HS Code 84-87 章機械設備通常屬於 Annex I-B</p>
+    </div>
+
+    <div class="field-group">
+      <label class="field-label" for="steel-weight-pct">鋼鋁重量佔產品比例（%）</label>
+      <div class="input-prefix">
+        <input type="number" id="steel-weight-pct" placeholder="25" min="0" max="100" step="1" style="padding-left:16px;">
+      </div>
+      <p class="field-hint">低於 15% 可能免稅（Annex I-B / III）</p>
+    </div>
+
+    <button class="btn-calc" onclick="calculate()">計算關稅衝擊</button>
+  </div>
+
+  <!-- RESULTS -->
+  <div class="result-card">
+    <h2>計算結果</h2>
+
+    <div class="result-empty" id="result-empty">
+      <p>輸入產品資訊<br>即時顯示新舊制對比</p>
+    </div>
+
+    <div class="result-content" id="result-content">
+
+      <div class="result-row">
+        <span class="result-label">產品售價</span>
+        <span class="result-value" id="res-price">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">鋼鋁材料成本</span>
+        <span class="result-value" id="res-steel">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">產品分類</span>
+        <span class="result-value" id="res-annex">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">舊制關稅</span>
+        <span class="result-value val-old" id="res-old">—</span>
+      </div>
+      <div class="result-row">
+        <span class="result-label">新制關稅</span>
+        <span class="result-value val-new" id="res-new">—</span>
+      </div>
+
+      <div class="result-highlight">
+        <p class="diff-label">每件產品多付</p>
+        <p class="diff-amount" id="res-diff">—</p>
+        <p class="diff-pct" id="res-pct">—</p>
+      </div>
+
+      <div class="eligibility-box">
+        <p class="elig-title">退稅資格檢查</p>
+        <div class="elig-item">
+          <span class="elig-dot">❌</span>
+          <span>台灣不在正式豁免名單（EU / 英 / 日 / 韓 / USMCA），目前<strong>無法申請退稅</strong></span>
+        </div>
+        <div class="elig-item" id="weight-elig" style="display:none">
+          <span class="elig-dot" id="weight-dot">—</span>
+          <span id="weight-text">—</span>
+        </div>
+        <div class="elig-item">
+          <span class="elig-dot">💡</span>
+          <span>台美 ART 已於 2026/2 定稿，但一般鋼鋁製品仍無豁免；退稅程序「待定」</span>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- SIMULATOR -->
+  <div class="simulator-card" id="simulator-card">
+    <div class="sim-header">
+      <h2>情境模擬：你要怎麼應對？</h2>
+      <div class="slider-row">
+        <span class="slider-label">預期毛利率</span>
+        <input type="range" id="margin-slider" min="0" max="50" value="20" step="1"
+               oninput="onSlider()">
+        <span class="slider-value" id="slider-val">20%</span>
+      </div>
+    </div>
+
+    <div class="sim-metrics">
+      <div class="sim-metric">
+        <div class="sim-metric-value" id="sim-tariff">—</div>
+        <div class="sim-metric-label">232 關稅總額</div>
+      </div>
+      <div class="sim-metric">
+        <div class="sim-metric-value" id="sim-margin">—</div>
+        <div class="sim-metric-label">情境A 稅後毛利率</div>
+      </div>
+      <div class="sim-metric">
+        <div class="sim-metric-value" id="sim-new-price">—</div>
+        <div class="sim-metric-label">情境B 建議新報價</div>
+      </div>
+    </div>
+
+    <div class="sim-warning" id="sim-warning">
+      <span id="sim-warning-text">—</span>
+    </div>
+
+    <div class="sim-chart">
+      <div class="chart-bars">
+        <div class="chart-bar-wrap">
+          <div class="bar-col" id="bar-base"></div>
+          <div class="bar-label">原始報價</div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="bar-col" id="bar-a"></div>
+          <div class="bar-label">情境A<small>自行吸收</small></div>
+        </div>
+        <div class="chart-bar-wrap">
+          <div class="bar-col" id="bar-b"></div>
+          <div class="bar-label">情境B<small>轉嫁買家</small></div>
+        </div>
+      </div>
+      <div class="chart-legend">
+        <span class="legend-item"><span class="legend-dot" style="background:#3B82F6"></span>材料成本</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#22C55E"></span>淨利潤</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#EF4444"></span>關稅損失（情境A）</span>
+        <span class="legend-item"><span class="legend-dot" style="background:#FF7200"></span>轉嫁加成（情境B）</span>
+      </div>
+    </div>
+
+    <div class="sim-cta">
+      <p>看到數字了嗎？<strong>預約 30 分鐘諮詢</strong>，制定你的應對策略</p>
+      <a href="mailto:jessie@ahbase.com?subject=232關稅應對諮詢" class="btn-sim-cta">預約 30 分鐘諮詢 →</a>
+    </div>
+  </div>
+
+  <!-- EMAIL CAPTURE -->
+  <div class="email-card" id="email-card">
+    <h2>收到結果了？這只是開始。</h2>
+    <p>留下 email，收到：關稅 政策最新動態。<br>同時告訴我你最擔心的挑戰，讓我知道怎麼幫你。</p>
+
+    <div class="survey-question">
+      <span class="survey-q-label">你目前最擔心的出口挑戰是什麼？</span>
+      <div class="survey-options">
+        <div class="survey-option" onclick="selectOption(this, 'A')">
+          <input type="radio" name="challenge" value="A" id="opt-a">
+          <label for="opt-a">關稅成本暴增，不知道怎麼跟客戶談漲價</label>
+        </div>
+        <div class="survey-option" onclick="selectOption(this, 'B')">
+          <input type="radio" name="challenge" value="B" id="opt-b">
+          <label for="opt-b">想把供應鏈轉移到其他國家，但不知道怎麼評估</label>
+        </div>
+        <div class="survey-option" onclick="selectOption(this, 'C')">
+          <input type="radio" name="challenge" value="C" id="opt-c">
+          <label for="opt-c">想了解退稅或豁免的可能性</label>
+        </div>
+        <div class="survey-option" onclick="selectOption(this, 'D')">
+          <input type="radio" name="challenge" value="D" id="opt-d">
+          <label for="opt-d">想找除美國市場以外的出口機會</label>
+        </div>
+      </div>
+    </div>
+
+    <div class="email-row">
+      <input type="email" id="email-input" placeholder="your@email.com">
+      <button class="btn-submit" onclick="submitEmail()">獲取完整報告</button>
+    </div>
+    <p class="email-note">不發垃圾信。只有有價值的國際發展策略分析。隨時可取消訂閱。</p>
+
+    <div class="success-msg" id="success-msg">
+      <p>✓ 收到了！我會在 24 小時內寄出完整分析報告。<br>如果有緊急問題，直接寫信給我：<strong>jessie@ahbase.com</strong></p>
+    </div>
+  </div>
+
+</div>
+
+<footer>
+  <p>資料來源：美國白宮公告 2026/4/2・CBP・經濟部國際貿易署 ｜ 計算結果僅供參考，實際稅額將以實際報關內容為準</p>
+</footer>
+
+<script>
+  const RATES = { A: 0.50, B: 0.25, C: 0.50, D: 0.25 };
+  const ANNEX_LABELS = {
+    A: 'Annex I-A（純鋼 50%）',
+    B: 'Annex I-B（鋼衍生 25%）',
+    C: 'Annex II（純鋁 50%）',
+    D: 'Annex III（鋁衍生 25%）'
+  };
+  const ANNEX_CLASSES = { A: 'annex-a', B: 'annex-b', C: 'annex-c', D: 'annex-d' };
+
+  // 模組層級狀態（供 Slider 重算用）
+  let _price = 0, _newTariff = 0;
+
+  function fmt(n) {
+    return '$' + n.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  }
+  function fmtPct(n) {
+    return (n >= 0 ? '+' : '') + (n * 100).toFixed(1) + '%';
+  }
+
+  // ── Pure Functions ──────────────────────────────────────────────
+  function calcTariff({ price, steel, cat, weightPct }) {
+    const rate = RATES[cat];
+    const oldTariff = steel * rate;
+    let newTariff, exemptByWeight = false;
+    if ((cat === 'B' || cat === 'D') && !isNaN(weightPct) && weightPct < 15) {
+      newTariff = 0; exemptByWeight = true;
+    } else {
+      newTariff = price * rate;
+    }
+    const diff = newTariff - oldTariff;
+    const diffPct = oldTariff > 0 ? diff / oldTariff : null;
+    return { oldTariff, newTariff, diff, diffPct, exemptByWeight };
+  }
+
+  function calcScenario({ price, newTariff, marginPct }) {
+    const cost = price * (1 - marginPct);
+    const profit = price * marginPct;
+    const scenA_profit = profit - newTariff;
+    const scenA_margin = scenA_profit / price;
+    const scenB_price = price + newTariff;
+    return { cost, profit, scenA_profit, scenA_margin, scenB_price, showWarning: scenA_margin < 0 };
+  }
+
+  // ── UI Functions ────────────────────────────────────────────────
+  function calculate() {
+    const price = parseFloat(document.getElementById('product-price').value);
+    const steel = parseFloat(document.getElementById('steel-cost').value);
+    const cat = document.getElementById('product-category').value;
+    const weightPct = parseFloat(document.getElementById('steel-weight-pct').value);
+
+    if (!price || !steel || !cat) {
+      alert('請填入售價、鋼鋁材料成本，並選擇產品分類。');
+      return;
+    }
+    if (steel > price) {
+      alert('鋼鋁材料成本不能高於產品售價。');
+      return;
+    }
+
+    const result = calcTariff({ price, steel, cat, weightPct });
+    showResults(price, steel, cat, result, weightPct);
+  }
+
+  function showResults(price, steel, cat, result, weightPct) {
+    const { oldTariff, newTariff, diff, diffPct, exemptByWeight } = result;
+
+    document.getElementById('result-empty').classList.add('hidden');
+    document.getElementById('result-content').classList.add('visible');
+
+    document.getElementById('res-price').textContent = fmt(price);
+    document.getElementById('res-steel').textContent = fmt(steel);
+    document.getElementById('res-annex').innerHTML =
+      `<span class="annex-badge ${ANNEX_CLASSES[cat]}">${ANNEX_LABELS[cat]}</span>`;
+    document.getElementById('res-old').textContent = fmt(oldTariff);
+    document.getElementById('res-new').textContent = exemptByWeight ? '$0.00（重量豁免）' : fmt(newTariff);
+
+    const diffEl = document.getElementById('res-diff');
+    const pctEl = document.getElementById('res-pct');
+    if (exemptByWeight) {
+      diffEl.textContent = '$0.00';
+      pctEl.textContent = '此產品符合重量豁免，新制免稅';
+    } else {
+      diffEl.textContent = fmt(diff);
+      pctEl.textContent = diffPct !== null ? `較舊制增加 ${(diffPct * 100).toFixed(0)}%` : '無舊制基準';
+    }
+
+    // 重量豁免提示
+    const weightRow = document.getElementById('weight-elig');
+    if ((cat === 'B' || cat === 'D') && !isNaN(weightPct)) {
+      weightRow.style.display = 'flex';
+      document.getElementById('weight-dot').textContent = weightPct < 15 ? '✅' : '⚠️';
+      document.getElementById('weight-text').innerHTML = weightPct < 15
+        ? `鋼鋁重量佔比 ${weightPct}% &lt; 15%，<strong>符合重量豁免條件</strong>`
+        : `鋼鋁重量佔比 ${weightPct}% ≥ 15%，<strong>不符合重量豁免</strong>`;
+    }
+
+    // 展開並初始化情境模擬器
+    _price = price;
+    _newTariff = newTariff;
+    const simCard = document.getElementById('simulator-card');
+    simCard.style.display = 'block';
+    runSimulator();
+
+    setTimeout(() => {
+      simCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+    }, 100);
+  }
+
+  // ── Simulator ───────────────────────────────────────────────────
+  function onSlider() {
+    const val = document.getElementById('margin-slider').value;
+    document.getElementById('slider-val').textContent = val + '%';
+    runSimulator();
+  }
+
+  function runSimulator() {
+    const marginPct = parseFloat(document.getElementById('margin-slider').value) / 100;
+    const s = calcScenario({ price: _price, newTariff: _newTariff, marginPct });
+
+    // 指標
+    document.getElementById('sim-tariff').textContent = fmt(_newTariff);
+    const marginEl = document.getElementById('sim-margin');
+    marginEl.textContent = (s.scenA_margin * 100).toFixed(1) + '%';
+    marginEl.style.color = s.scenA_margin < 0 ? '#EF4444' : '#22C55E';
+    document.getElementById('sim-new-price').textContent = fmt(s.scenB_price);
+
+    // 警告
+    const warnEl = document.getElementById('sim-warning');
+    warnEl.style.display = s.showWarning ? 'block' : 'none';
+    if (s.showWarning) {
+      document.getElementById('sim-warning-text').textContent =
+        `⚠️ 警告：自行吸收關稅將導致虧損（毛利率 ${(s.scenA_margin * 100).toFixed(1)}%）。建議立即評估轉嫁或議價策略。`;
+    }
+
+    // 圖表
+    updateChart(s);
+  }
+
+  function updateChart(s) {
+    const MAX_H = 220;
+    const maxVal = s.scenB_price;
+    const toH = v => Math.max(0, (v / maxVal) * MAX_H);
+
+    // Bar 0：原始報價
+    setBar('bar-base', [
+      { h: toH(s.cost),   color: '#3B82F6' },
+      { h: toH(s.profit), color: '#22C55E' }
+    ]);
+
+    // Bar A：自行吸收（總高 = price，利潤被吃）
+    const absorbed = Math.min(_newTariff, s.profit);
+    const remainProfit = Math.max(s.scenA_profit, 0);
+    setBar('bar-a', [
+      { h: toH(s.cost),       color: '#3B82F6' },
+      { h: toH(remainProfit), color: '#22C55E' },
+      { h: toH(absorbed),     color: '#EF4444' }
+    ]);
+
+    // Bar B：完全轉嫁（總高 = scenB_price）
+    setBar('bar-b', [
+      { h: toH(s.cost),       color: '#3B82F6' },
+      { h: toH(s.profit),     color: '#22C55E' },
+      { h: toH(_newTariff),   color: '#FF7200' }
+    ]);
+  }
+
+  function setBar(id, layers) {
+    // layers[0] = 底層, layers[last] = 頂層（flex-direction: column-reverse）
+    document.getElementById(id).innerHTML = layers
+      .map(l => `<div style="height:${l.h.toFixed(1)}px;background:${l.color};flex-shrink:0;"></div>`)
+      .join('');
+  }
+
+  function selectOption(el, val) {
+    document.querySelectorAll('.survey-option').forEach(o => o.classList.remove('selected'));
+    el.classList.add('selected');
+    document.querySelector(`input[value="${val}"]`).checked = true;
+  }
+
+  // ── GAS Webhook URL（部署 GAS 後填入 doPost 網址）──────────
+  var GAS_WEBHOOK_URL = 'https://script.google.com/macros/s/AKfycbxQ5IIV8g1IG9QNuQzzakrcAnDtGwL2APR44tU0TJxbbjdRfvcuu_a84O9j5HXASVen/exec';
+
+  function submitEmail() {
+    const email = document.getElementById('email-input').value.trim();
+    const challenge = document.querySelector('input[name="challenge"]:checked');
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+      alert('請輸入有效的 email 地址。');
+      return;
+    }
+
+    const challengeVal = challenge ? challenge.value : 'none';
+    // 收集所有計算結果，讓 GAS 有完整資料生成報告與累積分析
+    const payload = {
+      email,
+      challenge:          challengeVal,
+      product_price:      document.getElementById('product-price').value      || '未填寫',
+      product_category:   document.getElementById('product-category').value   || '未選擇',
+      steel_cost:         document.getElementById('steel-cost').value         || '未填寫',
+      weight_pct:         document.getElementById('steel-weight-pct').value   || '未填寫',
+      old_tariff:         document.getElementById('res-old')?.textContent?.replace(/[^0-9.]/g, '')    || '未計算',
+      new_tariff:         document.getElementById('res-new')?.textContent?.replace(/[$（重量豁免）]/g, '').trim() || '未計算',
+      diff_amt:           document.getElementById('res-diff')?.textContent?.replace(/[^0-9.]/g, '')   || '未計算',
+      diff_pct:           document.getElementById('res-pct')?.textContent                             || '未計算',
+      margin_pct:         document.getElementById('margin-slider')?.value                             || '20',
+      scen_a_margin:      document.getElementById('sim-margin')?.textContent                          || '未計算',
+      scen_b_price:       document.getElementById('sim-new-price')?.textContent?.replace(/[^0-9.]/g, '') || '未計算',
+      weight_exempt:      document.getElementById('weight-dot')?.textContent === '✅' ? '符合' : '不符合',
+      source:             '232-calculator'
+    };
+
+    // 先顯示成功訊息（不等 fetch 回應，避免用戶等待）
+    document.getElementById('email-input').style.display = 'none';
+    document.querySelector('.btn-submit').style.display = 'none';
+    document.getElementById('success-msg').style.display = 'block';
+
+    if (GAS_WEBHOOK_URL && GAS_WEBHOOK_URL !== 'YOUR_GAS_WEBHOOK_URL') {
+      fetch(GAS_WEBHOOK_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain' }, // GAS doPost 需 text/plain 以解析 JSON
+        body: JSON.stringify(payload)
+      }).catch(function() {});
+    }
+  }
+</script>
+
+</body>
+</html>
