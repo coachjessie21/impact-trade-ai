@@ -153,6 +153,10 @@
     align-items: start;
   }
 
+  /* calc + result 並排，其餘全寬 */
+  .calc-card { grid-column: 1; grid-row: 1; }
+  .result-card { grid-column: 2; grid-row: 1; align-self: start; }
+
   /* CALCULATOR CARD */
   .calc-card {
     background: var(--card);
@@ -244,8 +248,7 @@
     border: 1px solid var(--border);
     border-radius: 20px;
     padding: 36px;
-    position: sticky;
-    top: 24px;
+    align-self: start;
   }
   .result-card h2 {
     font-family: 'Syne', sans-serif;
@@ -667,23 +670,49 @@
   /* FOOTER */
   footer {
     border-top: 1px solid var(--border);
-    padding: 28px 40px;
-    text-align: center;
+    padding: 40px 40px 48px;
     max-width: 960px;
     margin: 0 auto;
   }
-  footer p {
+  .footer-block { margin-bottom: 24px; }
+  .footer-block h4 {
     font-family: 'Space Mono', monospace;
     font-size: 13px;
-    color: #B8B8D4;
+    font-weight: 700;
+    color: #C8C8E0;
+    margin-bottom: 10px;
+    letter-spacing: 0.5px;
   }
+  .footer-block p, .footer-block li {
+    font-family: 'Space Mono', monospace;
+    font-size: 13px;
+    color: #8888A8;
+    line-height: 1.9;
+  }
+  .footer-block a { color: #FF7200; text-decoration: none; }
+  .footer-block a:hover { text-decoration: underline; }
+  .footer-block ul { list-style: none; padding: 0; }
+  .footer-block li::before { content: "· "; color: #FF7200; }
+  .footer-copyright {
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    color: #666680;
+    border-top: 1px solid var(--border);
+    padding-top: 20px;
+    margin-top: 8px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+  }
+  .footer-copyright img { height: 48px; width: auto; opacity: 0.85; display: block; }
 
   @media (max-width: 768px) {
     nav { padding: 16px 20px; }
     .page-header { padding: 48px 20px 32px; }
     .alert-bar { padding: 0 20px; }
     .main { grid-template-columns: 1fr; padding: 0 20px 64px; }
-    .result-card { position: static; }
+    .result-card { align-self: start; }
     .simulator-card { grid-column: 1; padding: 24px 20px; }
     .sim-header { flex-direction: column; align-items: flex-start; }
     .sim-metrics { grid-template-columns: 1fr; }
@@ -916,14 +945,55 @@
     <p class="email-note">不發垃圾信。只有有價值的國際發展策略分析。隨時可取消訂閱。</p>
 
     <div class="success-msg" id="success-msg">
-      <p>✓ 收到了！我會在 24 小時內寄出完整分析報告。<br>如果有緊急問題，直接寫信給我：<strong>jessie@ahbase.com</strong></p>
+      <p>✓ 收到了！我會在 48 小時內寄出完整分析報告。<br>如果有緊急問題，直接寫信給我：<strong>jessie@ahbase.com</strong></p>
     </div>
   </div>
 
 </div>
 
 <footer>
-  <p>資料來源：美國白宮公告 2026/4/2・CBP・經濟部國際貿易署 ｜ 計算結果僅供參考，實際稅額將以實際報關內容為準</p>
+
+  <div class="footer-block">
+    <h4>【數據來源說明】</h4>
+    <p>
+      關稅稅率依據：美國總統 Proclamation 11021（2026/4/6 生效），刊登於
+      <a href="https://www.federalregister.gov/" target="_blank" rel="noopener">美國聯邦公報（Federal Register）</a>。<br>
+      Annex 分類依據：<a href="https://www.cbp.gov/trade/programs-administration/entry-summary/232-tariffs" target="_blank" rel="noopener">美國海關邊境保護局（CBP）232 條款官方指引</a>。<br>
+      台美 ART（Agreement on Reciprocal Trade）資訊：<a href="https://ustr.gov/" target="_blank" rel="noopener">美國貿易代表辦公室（USTR）</a>，2026/2/12 定稿。<br>
+      重量豁免（de minimis）：鋼鋁衍生製品若鋼鋁重量佔比低於 15%，可向 CBP 申請豁免裁定，惟仍需正式申請確認。<br>
+      台灣貿易政策參考：<a href="https://www.trade.gov.tw/" target="_blank" rel="noopener">經濟部國際貿易署</a>。
+    </p>
+  </div>
+
+  <div class="footer-block">
+    <h4>【免責聲明】</h4>
+    <p>
+      本工具提供之試算結果，<strong style="color:#C8C8E0;">僅供企業內部評估與參考用途，不構成法律、財務或法規遵循建議。</strong><br><br>
+      實際關稅金額須以正式報關文件、CBP 裁定及海關估價為準。不同產品 HS Code、進口商類別、原產地規則均可能影響最終稅額。<br><br>
+      台灣不在美國 232 鋼鋁關稅的正式豁免白名單（EU、英國、日本、韓國、USMCA 國家享有上限或豁免）。台美 ART 主要涵蓋汽車零件、木材類，一般鋼鋁製品仍面對全額 232 關稅。<br><br>
+      相關法規持續更新，本工具之數據及計算邏輯可能與最新官方版本存在差異。使用前請至
+      <a href="https://www.cbp.gov/trade/programs-administration/entry-summary/232-tariffs" target="_blank" rel="noopener">CBP 官方 232 條款頁面</a>確認最新規範。<br><br>
+      <strong style="color:#C8C8E0;">本工具製作者不對因使用本試算結果所產生之任何商業決策、財務損失或法規遵循問題負責。</strong>
+    </p>
+  </div>
+
+  <div class="footer-block">
+    <h4>【正式申報資源】</h4>
+    <ul>
+      <li>美國 CBP 232 條款官方說明：<a href="https://www.cbp.gov/trade/programs-administration/entry-summary/232-tariffs" target="_blank" rel="noopener">cbp.gov</a></li>
+      <li>聯邦公報完整公告：<a href="https://www.federalregister.gov/" target="_blank" rel="noopener">federalregister.gov</a></li>
+      <li>USTR 貿易政策資訊：<a href="https://ustr.gov/" target="_blank" rel="noopener">ustr.gov</a></li>
+      <li>台灣經濟部國際貿易署：<a href="https://www.trade.gov.tw/" target="_blank" rel="noopener">trade.gov.tw</a></li>
+      <li>如需顧問協助：<a href="mailto:jessie@ahbase.com?subject=232%E9%97%9C%E7%A8%85%E9%A1%A7%E5%95%8F" style="display:inline-block;margin-top:6px;background:linear-gradient(135deg,#FFD600,#FF7200,#E84000);color:#fff;font-weight:700;font-size:13px;padding:7px 18px;border-radius:999px;text-decoration:none;letter-spacing:0.5px;">聯絡覺心營</a></li>
+    </ul>
+  </div>
+
+  <div class="footer-copyright">
+    <img src="ahbase-logo.png" alt="覺心營股份有限公司">
+    <span>© 2026 覺心營股份有限公司 Awakening Heart Base Corporation. All rights reserved.<br>
+    本工具以 AI 輔助（Vibe Coding）製作，數據以官方來源為準。</span>
+  </div>
+
 </footer>
 
 <script>
