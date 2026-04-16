@@ -283,16 +283,22 @@ function buildPrompt(data) {
   var weightExempt = data.weight_exempt === '符合';
 
   var systemPrompt =
-    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士、Asia Impact Nexus 台灣負責人）的 AI 顧問助理。\n' +
-    '請以國際貿易策略顧問的專業口吻，用繁體中文撰寫企業主可直接使用的策略報告內容。\n' +
-    '語氣：精準、務實、有行動力，不空泛、不使用模糊用詞。\n' +
-    '重要規則：\n' +
-    '1. 所有政策事實必須每次重新查詢官方公告，基於已生效的美國法規，不得推測或捏造\n' +
-    '2. 2026/4/6 起，美國 232 關稅改為對整個產品出口售價（海關申報價值）課稅，非僅鋼鋁材料成本\n' +
-    '3. 台灣不在美國鋼鋁 232 關稅的正式豁免名單（EU、英國、日本、韓國、USMCA 國家才在）\n' +
-    '4. 台美 ART（2026/2/12 定稿）主要涵蓋汽車零件、木材類，一般鋼鋁製品仍面對全額 232\n' +
-    '5. 重量豁免（de minimis）：鋼鋁衍生製品若鋼鋁重量佔比 < 15% 可申請豁免，但需海關正式裁定\n' +
-    '6. 數字必須與企業資料完全一致，不得自行更改任何數值';
+    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士、Asia Impact Nexus 台灣負責人）的顧問助理。\n' +
+    '請以國際貿易策略顧問的專業口吻，用繁體中文撰寫企業主可直接使用的策略報告內容。\n\n' +
+    '【語言與語氣規則——違反即重寫】\n' +
+    '1. 禁止 AI 腔調：不得出現「值得注意的是」「需要指出的是」「綜上所述」「此外」「總體而言」「不容忽視」「首先」「其次」「最後」等套語\n' +
+    '2. 必須使用台灣繁體中文用詞，禁止中國大陸用詞：\n' +
+    '   - 軟體（非「软件」）、網路（非「网络」）、資訊（非「信息」）、協作（非「协同」）\n' +
+    '   - 供應商（非「供应商」）、採購（非「采购」）、報價（非「报价」）\n' +
+    '3. 語氣：直接、精準、務實——像頂尖顧問對董事會說話，不像 AI 寫給大眾的文章\n' +
+    '4. 所有建議策略和話術，必須基於真實的國際貿易實務（如 Incoterms 條款、海關估值規定、買賣合約結構），不可自行捏造\n\n' +
+    '【事實規則】\n' +
+    '5. 所有政策事實基於已生效的美國法規，不得推測或捏造\n' +
+    '6. 2026/4/6 起，美國 232 關稅改為對整個產品出口售價（海關申報價值）課稅，非僅鋼鋁材料成本\n' +
+    '7. 台灣不在美國鋼鋁 232 關稅的正式豁免名單（EU、英國、日本、韓國、USMCA 國家才在）\n' +
+    '8. 台美 ART（2026/2/12 定稿）主要涵蓋汽車零件、木材類，一般鋼鋁製品仍面對全額 232\n' +
+    '9. 重量豁免（de minimis）：鋼鋁衍生製品若鋼鋁重量佔比 < 15% 可申請豁免，但需海關正式裁定\n' +
+    '10. 數字必須與企業資料完全一致，不得自行更改任何數值';
 
   var userPrompt =
     '【格式強制規則 — 最高優先，不得違反】\n' +
@@ -515,7 +521,48 @@ function generateReport(data, claudeText) {
   }
 }
 
-// ── 7. Email HTML（六大區塊完整版）─────────────────────────
+// ── 7. Markdown 渲染（將 Gemini 輸出轉為精緻 HTML）──────────
+
+function renderMarkdown(text) {
+  if (!text) return '';
+  // 粗體 **text** → <strong>
+  text = text.replace(/\*\*([^*\n]+)\*\*/g, '<strong>$1</strong>');
+  var lines = text.split('\n');
+  var html = '';
+  var inList = false;
+
+  for (var i = 0; i < lines.length; i++) {
+    var line = lines[i];
+    var trimmed = line.trim();
+
+    if (trimmed === '') {
+      if (inList) { html += '</ul>'; inList = false; }
+      html += '<div style="height:10px;"></div>';
+      continue;
+    }
+    // 編號項目：1. / 2. 等
+    if (/^\d+[\.\、]\s/.test(trimmed)) {
+      if (inList) { html += '</ul>'; inList = false; }
+      var numMatch = trimmed.match(/^(\d+[\.\、])\s(.*)/);
+      html += '<div style="margin:0 0 12px;display:flex;gap:8px;">' +
+        '<span style="font-weight:700;color:#FF7200;min-width:20px;flex-shrink:0;">' + numMatch[1] + '</span>' +
+        '<span>' + numMatch[2] + '</span></div>';
+      continue;
+    }
+    // 子項目：* 或 - 開頭
+    if (/^[\*\-]\s/.test(trimmed)) {
+      if (!inList) { html += '<ul style="margin:4px 0 10px;padding-left:20px;">'; inList = true; }
+      html += '<li style="margin-bottom:8px;line-height:1.8;">' + trimmed.replace(/^[\*\-]\s/, '') + '</li>';
+      continue;
+    }
+    if (inList) { html += '</ul>'; inList = false; }
+    html += '<p style="margin:0 0 10px;line-height:1.85;">' + trimmed + '</p>';
+  }
+  if (inList) html += '</ul>';
+  return html;
+}
+
+// ── 8. Email HTML（六大區塊完整版）─────────────────────────
 
 function buildEmailHtml(data, claudeText) {
   var blocks  = parseBlocks(claudeText);
@@ -524,10 +571,10 @@ function buildEmailHtml(data, claudeText) {
 
   function section(title, content, accent) {
     return (
-      '<div style="background:#fff;border-radius:10px;padding:22px;margin-bottom:16px;border:1px solid #e8e0d8;">' +
+      '<div style="background:#fff;border-radius:10px;padding:24px 24px 16px;margin-bottom:16px;border:1px solid #e8e0d8;">' +
       '<p style="font-size:11px;font-weight:700;color:' + (accent || '#FF7200') +
-      ';text-transform:uppercase;letter-spacing:2px;margin:0 0 10px;">' + title + '</p>' +
-      '<div style="font-size:15px;line-height:1.85;color:#1a1a2e;">' + content.replace(/\n/g, '<br>') + '</div>' +
+      ';text-transform:uppercase;letter-spacing:2px;margin:0 0 14px;">' + title + '</p>' +
+      '<div style="font-size:15px;color:#1a1a2e;">' + renderMarkdown(content) + '</div>' +
       '</div>'
     );
   }
@@ -777,14 +824,20 @@ function appendCbamToSheet(data) {
 // ── CBAM Gemini Prompt ──────────────────────────────────────────
 function buildCbamPrompt(data) {
   var systemPrompt =
-    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士、UNDP SDG Impact Standard 認證講師）的 AI 顧問助理。\n' +
-    '請以 ESG 策略顧問的專業口吻，用繁體中文撰寫台灣企業主可直接使用的 CBAM 因應報告。\n' +
-    '語氣：精準、務實、有行動力。\n' +
-    '重要規則：\n' +
-    '1. 基於已生效的歐盟法規（Regulation EU 2023/956），不得推測或捏造\n' +
-    '2. CBAM 過渡期 2023-2025 只需申報，2026/10/1 起正式繳費\n' +
-    '3. 台灣企業需透過歐盟進口商（CBAM 申報義務人）間接面對 CBAM\n' +
-    '4. 數字必須與企業資料完全一致';
+    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士、UNDP SDG Impact Standard 認證講師）的顧問助理。\n' +
+    '請以 ESG 策略顧問的專業口吻，用繁體中文撰寫台灣企業主可直接使用的 CBAM 因應報告。\n\n' +
+    '【語言與語氣規則——違反即重寫】\n' +
+    '1. 禁止 AI 腔調：不得出現「值得注意的是」「需要指出的是」「綜上所述」「此外」「總體而言」「不容忽視」等套語\n' +
+    '2. 必須使用台灣繁體中文用詞，禁止中國大陸用詞：\n' +
+    '   - 軟體（非「软件」）、網路（非「网络」）、資訊（非「信息」）、供應商（非「供应商」）\n' +
+    '   - 採購（非「采购」）、報價（非「报价」）、認證（非「认证」）\n' +
+    '3. 語氣：直接、精準——像頂尖 ESG 顧問對董事會說話，不像泛用報告\n' +
+    '4. 所有建議策略，必須基於真實的 CBAM 法規實務（Regulation EU 2023/956）和國際碳市場機制，不可自行捏造\n\n' +
+    '【事實規則】\n' +
+    '5. 基於已生效的歐盟法規（Regulation EU 2023/956），不得推測或捏造\n' +
+    '6. CBAM 過渡期 2023-2025 只需申報，2026/10/1 起正式繳費\n' +
+    '7. 台灣企業需透過歐盟進口商（CBAM 申報義務人）間接面對 CBAM\n' +
+    '8. 數字必須與企業資料完全一致';
 
   var userPrompt =
     '【格式強制規則 — 最高優先，不得違反】\n' +
@@ -926,9 +979,9 @@ function buildCbamEmailHtml(data, claudeText) {
 
   function section(title, content, color) {
     return (
-      '<div style="background:#fff;border-radius:10px;padding:22px;margin-bottom:16px;border:1px solid #e8e0d8;">' +
-      '<p style="font-size:11px;font-weight:700;color:' + (color || '#3B7DD8') + ';text-transform:uppercase;letter-spacing:2px;margin:0 0 10px;">' + title + '</p>' +
-      '<div style="font-size:15px;line-height:1.85;color:#1a1a2e;">' + content.replace(/\n/g, '<br>') + '</div>' +
+      '<div style="background:#fff;border-radius:10px;padding:24px 24px 16px;margin-bottom:16px;border:1px solid #e8e0d8;">' +
+      '<p style="font-size:11px;font-weight:700;color:' + (color || '#3B7DD8') + ';text-transform:uppercase;letter-spacing:2px;margin:0 0 14px;">' + title + '</p>' +
+      '<div style="font-size:15px;color:#1a1a2e;">' + renderMarkdown(content) + '</div>' +
       '</div>'
     );
   }
