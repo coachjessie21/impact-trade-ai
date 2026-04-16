@@ -338,7 +338,7 @@ function callGeminiAPI(data) {
   var maxRetries = 3;
   var sleepTime = 2000;
   // 主力：2.5-flash（最強）→ 備援：2.0-flash（穩定）
-  var models = ['gemini-2.5-flash', 'gemini-2.0-flash-lite'];
+  var models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-001'];
 
   for (var m = 0; m < models.length; m++) {
   for (var i = 0; i < maxRetries; i++) {
