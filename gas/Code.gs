@@ -854,7 +854,7 @@ function processCbamReport(data) {
               headers: { 'Content-Type': 'application/json' },
               payload: JSON.stringify({
                 contents: [{ parts: [{ text: fullPrompt }] }],
-                generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
+                generationConfig: { temperature: 0.4, maxOutputTokens: 4096 }
               }),
               muteHttpExceptions: true
             }
@@ -869,6 +869,7 @@ function processCbamReport(data) {
           if (result.error) throw new Error(result.error.message);
           if (result.candidates && result.candidates[0].content) {
             report = result.candidates[0].content.parts[0].text;
+            Logger.log('CBAM ✅ 模型 ' + models[m] + ' 成功，輸出前100字：' + report.substring(0, 100));
             break;
           }
         } catch (err) {
