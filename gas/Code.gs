@@ -659,19 +659,31 @@ function buildEmailHtml(data, claudeText) {
     '<span style="font-size:12px;font-weight:700;background:rgba(22,163,74,0.1);color:#15803d;border-radius:6px;padding:4px 10px;">永續</span>' +
     '<span style="font-size:12px;font-weight:700;background:rgba(59,125,216,0.12);color:#1d4ed8;border-radius:6px;padding:4px 10px;">國際</span>' +
     '</div>' +
-    // 資歷條
-    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">' +
-    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">UNDP SDG Impact Standard 認證講師</span>' +
-    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">劍橋大學 CISL 永續領導力碩士</span>' +
-    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">Asia Impact Nexus 台灣負責人</span>' +
-    '</div>' +
+    // 資歷條（機構＋職稱分行，避免隨機斷行）
+    '<table style="border-collapse:collapse;width:100%;margin-bottom:20px;"><tr>' +
+    '<td style="width:33%;padding-right:8px;vertical-align:top;">' +
+    '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
+    '<div style="font-size:10px;color:#b08830;margin-bottom:2px;">UNDP SDG Impact Standard</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">認證講師</div>' +
+    '</div></td>' +
+    '<td style="width:33%;padding-right:8px;vertical-align:top;">' +
+    '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
+    '<div style="font-size:10px;color:#b08830;margin-bottom:2px;">劍橋大學 CISL</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">永續領導力碩士</div>' +
+    '</div></td>' +
+    '<td style="width:33%;vertical-align:top;">' +
+    '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
+    '<div style="font-size:10px;color:#b08830;margin-bottom:2px;">Asia Impact Nexus</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">台灣負責人</div>' +
+    '</div></td>' +
+    '</tr></table>' +
     // 三層服務卡片
     '<div style="display:grid;gap:10px;">' +
     // 輕量 — AI
     '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
     '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">輕量級｜AI 關稅診斷</span>' +
-    '<span style="font-size:11px;background:rgba(255,114,0,0.1);color:#FF7200;border-radius:999px;padding:2px 10px;border:1px solid rgba(255,114,0,0.3);">AI</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,114,0,0.1);color:#FF7200;border-radius:999px;padding:2px 10px;border:1px solid rgba(255,114,0,0.3);">AI</span>' +
     '</div>' +
     '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">用 AI 工具即時分析你的關稅數字、找出最有利的報價與談判策略（60 分鐘諮詢）</p>' +
     '</div>' +
@@ -679,7 +691,7 @@ function buildEmailHtml(data, claudeText) {
     '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
     '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">中量級｜永續供應鏈重組</span>' +
-    '<span style="font-size:11px;background:rgba(22,163,74,0.1);color:#15803d;border-radius:999px;padding:2px 10px;border:1px solid rgba(22,163,74,0.3);">永續</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(22,163,74,0.1);color:#15803d;border-radius:999px;padding:2px 10px;border:1px solid rgba(22,163,74,0.3);">永續</span>' +
     '</div>' +
     '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">從成本結構重算、ESG 供應鏈評估到買家溝通話術，實作落地</p>' +
     '</div>' +
@@ -687,7 +699,7 @@ function buildEmailHtml(data, claudeText) {
     '<div style="background:linear-gradient(135deg,#FF7200,#E84000);border-radius:8px;padding:14px 16px;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
     '<span style="font-weight:700;font-size:14px;color:#fff;">重量級｜國際市場佈局</span>' +
-    '<span style="font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">國際</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">國際</span>' +
     '</div>' +
     '<p style="margin:0;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">市場多元化規劃 × 跨國供應鏈重組 × 長期貿易風險管理陪跑</p>' +
     '</div>' +
@@ -1111,19 +1123,31 @@ function buildCbamEmailHtml(data, claudeText) {
     '<span style="font-size:12px;font-weight:700;background:rgba(22,163,74,0.1);color:#15803d;border-radius:6px;padding:4px 10px;">永續</span>' +
     '<span style="font-size:12px;font-weight:700;background:rgba(59,125,216,0.12);color:#1d4ed8;border-radius:6px;padding:4px 10px;">國際</span>' +
     '</div>' +
-    // 資歷條
-    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">' +
-    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">UNDP SDG Impact Standard 認證講師</span>' +
-    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">劍橋大學 CISL 永續領導力碩士</span>' +
-    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">Asia Impact Nexus 台灣負責人</span>' +
-    '</div>' +
+    // 資歷條（機構＋職稱分行，避免隨機斷行）
+    '<table style="border-collapse:collapse;width:100%;margin-bottom:20px;"><tr>' +
+    '<td style="width:33%;padding-right:8px;vertical-align:top;">' +
+    '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
+    '<div style="font-size:10px;color:#b08830;margin-bottom:2px;">UNDP SDG Impact Standard</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">認證講師</div>' +
+    '</div></td>' +
+    '<td style="width:33%;padding-right:8px;vertical-align:top;">' +
+    '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
+    '<div style="font-size:10px;color:#b08830;margin-bottom:2px;">劍橋大學 CISL</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">永續領導力碩士</div>' +
+    '</div></td>' +
+    '<td style="width:33%;vertical-align:top;">' +
+    '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
+    '<div style="font-size:10px;color:#b08830;margin-bottom:2px;">Asia Impact Nexus</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">台灣負責人</div>' +
+    '</div></td>' +
+    '</tr></table>' +
     // 三層服務卡片
     '<div style="display:grid;gap:10px;">' +
     // 輕量 — AI
     '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
     '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">輕量級｜AI 碳費診斷</span>' +
-    '<span style="font-size:11px;background:rgba(255,114,0,0.1);color:#FF7200;border-radius:999px;padding:2px 10px;border:1px solid rgba(255,114,0,0.3);">AI</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,114,0,0.1);color:#FF7200;border-radius:999px;padding:2px 10px;border:1px solid rgba(255,114,0,0.3);">AI</span>' +
     '</div>' +
     '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">用 AI 工具即時試算 CBAM 成本、釐清申報義務與初步因應策略（單次諮詢）</p>' +
     '</div>' +
@@ -1131,7 +1155,7 @@ function buildCbamEmailHtml(data, claudeText) {
     '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
     '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">中量級｜永續 ESG 策略 + 買家溝通</span>' +
-    '<span style="font-size:11px;background:rgba(22,163,74,0.1);color:#15803d;border-radius:999px;padding:2px 10px;border:1px solid rgba(22,163,74,0.3);">永續</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(22,163,74,0.1);color:#15803d;border-radius:999px;padding:2px 10px;border:1px solid rgba(22,163,74,0.3);">永續</span>' +
     '</div>' +
     '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">碳排強度認證取得、CBAM 成本分攤談判、歐盟買家溝通話術實作</p>' +
     '</div>' +
@@ -1139,7 +1163,7 @@ function buildCbamEmailHtml(data, claudeText) {
     '<div style="background:linear-gradient(135deg,#3B7DD8,#6E5AF0);border-radius:8px;padding:14px 16px;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
     '<span style="font-weight:700;font-size:14px;color:#fff;">重量級｜國際市場永續競爭力</span>' +
-    '<span style="font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">國際</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">國際</span>' +
     '</div>' +
     '<p style="margin:0;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">碳盤查建置 × 供應鏈低碳轉型 × 歐盟市場長期布局陪跑</p>' +
     '</div>' +
