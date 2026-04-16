@@ -465,7 +465,10 @@ function buildEmailHtml(data, claudeText) {
     '<div style="height:5px;background:linear-gradient(135deg,#FFD600,#FF7200,#E84000);border-radius:12px 12px 0 0;"></div>' +
     '<div style="background:#f9f9f7;border:1px solid #e8e0d8;border-top:none;border-radius:0 0 12px 12px;padding:36px;">' +
 
-    // 封面
+    // LOGO + 封面
+    '<div style="margin-bottom:20px;">' +
+    '<img src="https://impact-trade-ai.pages.dev/ahbase-logo.png" alt="覺心營" style="height:48px;width:auto;display:block;">' +
+    '</div>' +
     '<h1 style="font-size:20px;font-weight:700;color:#1a1a2e;margin:0 0 4px;">2026 美國 232 條款關稅衝擊與轉型策略分析報告</h1>' +
     '<p style="color:#6b6b80;font-size:12px;margin:0 0 28px;">由 Jessie Chang · 覺心營 為你個人化準備 · ' + dateStr + '</p>' +
 
