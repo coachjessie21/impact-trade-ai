@@ -564,7 +564,7 @@ function buildEmailHtml(data, claudeText) {
     '</ul></div>' +
 
     // CTA 按鈕
-    '<a href="mailto:jessie@ahbase.com?subject=預約232關稅衝擊諮詢&body=報告日期：' + dateStr + '%0A產品分類：' + data.product_category + '%0A關稅增幅：' + data.diff_pct + '" ' +
+    '<a href="https://calendar.app.google/yz9edJxyySbihWEy6" ' +
     'style="display:block;background:linear-gradient(135deg,#FFD600,#FF7200,#E84000);color:#fff;' +
     'text-align:center;padding:16px;border-radius:999px;text-decoration:none;font-weight:700;' +
     'font-size:15px;letter-spacing:1px;margin-bottom:8px;">預約免費 三十分鐘關稅衝擊諮詢 →</a>' +
