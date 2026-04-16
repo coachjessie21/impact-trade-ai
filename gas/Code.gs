@@ -324,11 +324,13 @@ function buildPrompt(data) {
     '- 重量豁免資格初步判定：' + data.weight_exempt + '\n' +
     '- 企業最大挑戰：' + painPoint + '\n\n' +
 
-    '[BLOCK1] 執行摘要\n' +
+    '=== 六大區塊內容規格（寫作指引）===\n\n' +
+
+    '【BLOCK1 — 執行摘要】\n' +
     '用 2-3 句直接點出財務衝擊：關稅從多少增加到多少、增加了幾倍。' +
     (isLoss ? '必須明確指出若自行吸收將直接虧損。' : '') + '\n\n' +
 
-    '[BLOCK2] 政策現實確認\n' +
+    '【BLOCK2 — 政策現實確認】\n' +
     '說明三件事：\n' +
     '① 台灣目前不在美國232正式豁免名單（列出誰在名單：EU/英/日/韓/USMCA）\n' +
     '② 台美ART已於2026/2/12定稿，但主要涵蓋汽車零件/木材，此類產品仍面對全額232\n' +
@@ -336,29 +338,49 @@ function buildPrompt(data) {
       ? '③ 此企業鋼鋁重量佔比 ' + data.weight_pct + '% 低於 15%，具備重量豁免（de minimis）申請潛力，但需向海關申請正式裁定（Ruling），強烈建議諮詢報關行或貿易律師確認。'
       : '③ 此企業鋼鋁重量佔比 ' + data.weight_pct + '% 超過 15%，不符合重量豁免條件。') + '\n\n' +
 
-    '[BLOCK3] 利潤壓力分析\n' +
+    '【BLOCK3 — 利潤壓力分析】\n' +
     (isLoss
       ? '【緊急警告】情境A顯示若企業全額吸收新制關稅，稅後毛利率將降至 ' + data.scen_a_margin + '，直接陷入虧損。\n'
       : '情境A若自行吸收，稅後毛利率剩 ' + data.scen_a_margin + '，分析此毛利率是否仍能維持營運。\n') +
     '情境B若完全轉嫁，建議新報價 $' + data.scen_b_price + '，分析美國買家接受度風險。\n' +
     '提供：如何計算最低盈虧平衡報價的思路（公式說明）。\n\n' +
 
-    '[BLOCK4] 三個立即可用的談判話術\n' +
+    '【BLOCK4 — 三個立即可用的談判話術】\n' +
     '針對挑戰「' + painPoint + '」，提供三個話術，格式：\n' +
     '話術一：【情境】【中文版本】【English version（30 words max）】\n' +
     '話術二：同上格式\n' +
     '話術三：同上格式\n' +
     '核心論點：這是美國聯邦法規強制要求，全台供應鏈均受影響，非廠商自主調漲。\n\n' +
 
-    '[BLOCK5] 30天立即行動計劃\n' +
+    '【BLOCK5 — 30天立即行動計劃】\n' +
     '三個具體行動，每個包含：行動名稱、具體步驟、預期效果。\n' +
     (isLoss ? '第一個行動必須標注【緊急】。\n' : '') +
     '行動範圍：重新核算成本結構、買家溝通策略、供應鏈或市場多元化評估。\n\n' +
 
-    '[BLOCK6] 下一步：覺心營顧問服務\n' +
-    '一段激勵結語，說明面對這樣的衝擊，企業需要的不只是計算器，而是系統性的應對策略。\n' +
-    '帶出 Jessie Chang 的背景（UNDP SDG Impact Standard 認證講師 劍橋大學 永續領導力碩士班、Asia Impact Nexus 台灣負責人）。\n' +
-    '提供三個層次的服務選項（輕/中/重），並附上諮詢邀請。';
+    '【BLOCK6 — 下一步：覺心營顧問服務】\n' +
+    '語氣：直接、務實，像顧問告訴董事會「現在要做什麼」，禁止銷售文案腔（禁用「誠摯邀請」「擘劃藍圖」「攜手共創」「賦能」等詞）。\n' +
+    '寫法：\n' +
+    '第一句：直接點出這份報告揭露的核心問題（用具體數字），說明光靠計算器不夠、需要後續行動。\n' +
+    '第二句：說明 Jessie Chang 能提供的是什麼——具體點出：國際貿易談判策略、UNDP SDG Impact Standard 認證、劍橋大學 CISL 永續領導力碩士、Asia Impact Nexus 台灣負責人。\n' +
+    '服務選項（三層，條列式）：\n' +
+    '・輕量級「策略診斷」：60 分鐘，釐清你的關稅衝擊和最佳應對路徑\n' +
+    '・中量級「方案設計與溝通輔導」：從成本重構到買家溝通話術，實作落地\n' +
+    '・重量級「全面性風險管理與市場開拓」：長期陪跑，含供應鏈與市場多元化\n' +
+    '結尾：一句話，直接邀請預約免費初步諮詢，不用堆砌形容詞。\n\n' +
+
+    '=== 輸出格式（只輸出以下六個標籤與內容，不得有任何前言或標題）===\n\n' +
+    '[BLOCK1]\n' +
+    '（BLOCK1 內容）\n\n' +
+    '[BLOCK2]\n' +
+    '（BLOCK2 內容）\n\n' +
+    '[BLOCK3]\n' +
+    '（BLOCK3 內容）\n\n' +
+    '[BLOCK4]\n' +
+    '（BLOCK4 內容）\n\n' +
+    '[BLOCK5]\n' +
+    '（BLOCK5 內容）\n\n' +
+    '[BLOCK6]\n' +
+    '（BLOCK6 內容）';
 
   return { system: systemPrompt, user: userPrompt };
 }
@@ -385,7 +407,7 @@ function callGeminiAPI(data) {
           headers: { 'Content-Type': 'application/json' },
           payload: JSON.stringify({
             contents: [{ parts: [{ text: fullPrompt }] }],
-            generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
+            generationConfig: { temperature: 0.4, maxOutputTokens: 4096 }
           }),
           muteHttpExceptions: true
         }
@@ -855,33 +877,49 @@ function buildCbamPrompt(data) {
     '- 預估年度 CBAM 成本：€' + data.cbamEur + '（約 NTD ' + data.cbamNtd + '）\n' +
     '- 主要挑戰：' + data.challenge + '\n\n' +
 
-    '[BLOCK1] 執行摘要\n' +
+    '=== 六大區塊內容規格（寫作指引）===\n\n' +
+
+    '【BLOCK1 — 執行摘要】\n' +
     '直接點出財務衝擊：年度 CBAM 碳費是多少、相當於每噸產品增加多少成本。\n\n' +
 
-    '[BLOCK2] CBAM 政策架構與台灣現況\n' +
+    '【BLOCK2 — CBAM 政策架構與台灣現況】\n' +
     '說明三件事：\n' +
     '① 什麼是 CBAM（歐盟碳邊境調整機制），2026/10/1 起正式繳費\n' +
     '② 台灣企業的直接義務：由歐盟進口商申報，但成本壓力會轉嫁回台灣供應商\n' +
     '③ 台灣碳費（2024/1 生效）與 CBAM 的關係：台灣碳費可部分抵扣 CBAM\n\n' +
 
-    '[BLOCK3] 碳排放競爭力分析\n' +
+    '【BLOCK3 — 碳排放競爭力分析】\n' +
     '分析此企業的碳排強度（' + data.intensity + ' tCO2/噸）vs 歐盟同類產品基準值（請使用已知的行業數據）。\n' +
     '說明差距對 CBAM 成本的影響，以及減排每降低 1 tCO2/噸可省多少碳費。\n\n' +
 
-    '[BLOCK4] 三大立即應對策略\n' +
+    '【BLOCK4 — 三大立即應對策略】\n' +
     '針對挑戰「' + data.challenge + '」，提供三個策略，每個包含：策略名稱、核心做法、預期效益。\n' +
     '策略方向：碳排放管理（取得碳排強度官方認證）、與歐盟買家談判（碳費分攤）、供應鏈低碳轉型（長期）。\n\n' +
 
-    '[BLOCK5] 30 天立即行動計劃\n' +
+    '【BLOCK5 — 30 天立即行動計劃】\n' +
     '三個具體行動（含行動名稱、步驟、預期效果）：\n' +
     '1. 取得產品碳排放強度認證（向歐盟進口商提供）\n' +
     '2. 主動與歐盟買家溝通 CBAM 成本分攤方案\n' +
     '3. 了解台灣碳費申報是否可作為 CBAM 抵扣\n\n' +
 
-    '[BLOCK6] 覺心營 ESG 顧問服務\n' +
+    '【BLOCK6 — 覺心營 ESG 顧問服務】\n' +
     '說明面對 CBAM，企業需要系統性 ESG 策略，不只是計算碳費。\n' +
     '帶出 Jessie Chang 的背景（UNDP SDG Impact Standard 認證講師、劍橋大學 CISL 永續領導力碩士、Asia Impact Nexus 台灣負責人）。\n' +
-    '提供三個層次的服務（輕/中/重），並附上諮詢邀請。';
+    '提供三個層次的服務（輕/中/重），並附上諮詢邀請。\n\n' +
+
+    '=== 輸出格式（只輸出以下六個標籤與內容，不得有任何前言或標題）===\n\n' +
+    '[BLOCK1]\n' +
+    '（BLOCK1 內容）\n\n' +
+    '[BLOCK2]\n' +
+    '（BLOCK2 內容）\n\n' +
+    '[BLOCK3]\n' +
+    '（BLOCK3 內容）\n\n' +
+    '[BLOCK4]\n' +
+    '（BLOCK4 內容）\n\n' +
+    '[BLOCK5]\n' +
+    '（BLOCK5 內容）\n\n' +
+    '[BLOCK6]\n' +
+    '（BLOCK6 內容）';
 
   return { system: systemPrompt, user: userPrompt };
 }
