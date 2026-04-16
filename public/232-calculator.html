@@ -907,7 +907,7 @@
 
     <div class="sim-cta">
       <p>看到數字了嗎？<strong>預約 30 分鐘諮詢</strong>，制定你的應對策略</p>
-      <a href="mailto:jessie@ahbase.com?subject=232關稅應對諮詢" class="btn-sim-cta">預約 30 分鐘諮詢 →</a>
+      <a href="https://calendar.app.google/yz9edJxyySbihWEy6" target="_blank" class="btn-sim-cta">預約 30 分鐘諮詢 →</a>
     </div>
   </div>
 
@@ -984,7 +984,7 @@
       <li>聯邦公報完整公告：<a href="https://www.federalregister.gov/" target="_blank" rel="noopener">federalregister.gov</a></li>
       <li>USTR 貿易政策資訊：<a href="https://ustr.gov/" target="_blank" rel="noopener">ustr.gov</a></li>
       <li>台灣經濟部國際貿易署：<a href="https://www.trade.gov.tw/" target="_blank" rel="noopener">trade.gov.tw</a></li>
-      <li>如需顧問協助：<a href="mailto:jessie@ahbase.com?subject=232%E9%97%9C%E7%A8%85%E9%A1%A7%E5%95%8F" style="display:inline-block;margin-top:6px;background:linear-gradient(135deg,#FFD600,#FF7200,#E84000);color:#fff;font-weight:700;font-size:13px;padding:7px 18px;border-radius:999px;text-decoration:none;letter-spacing:0.5px;">聯絡覺心營</a></li>
+      <li>如需顧問協助：<a href="https://calendar.app.google/yz9edJxyySbihWEy6" target="_blank" style="display:inline-block;margin-top:6px;background:linear-gradient(135deg,#FFD600,#FF7200,#E84000);color:#fff;font-weight:700;font-size:13px;padding:7px 18px;border-radius:999px;text-decoration:none;letter-spacing:0.5px;">聯絡覺心營</a></li>
     </ul>
   </div>
 
@@ -1205,7 +1205,8 @@
       scen_a_margin:      document.getElementById('sim-margin')?.textContent                          || '未計算',
       scen_b_price:       document.getElementById('sim-new-price')?.textContent?.replace(/[^0-9.]/g, '') || '未計算',
       weight_exempt:      document.getElementById('weight-dot')?.textContent === '✅' ? '符合' : '不符合',
-      source:             '232-calculator'
+      source:             '232-calculator',
+      secret:             '$$$Ahbase2026'
     };
 
     // 先顯示成功訊息（不等 fetch 回應，避免用戶等待）
@@ -1216,7 +1217,8 @@
     if (GAS_WEBHOOK_URL && GAS_WEBHOOK_URL !== 'YOUR_GAS_WEBHOOK_URL') {
       fetch(GAS_WEBHOOK_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain' }, // GAS doPost 需 text/plain 以解析 JSON
+        mode: 'no-cors',
+        headers: { 'Content-Type': 'text/plain' },
         body: JSON.stringify(payload)
       }).catch(function() {});
     }
