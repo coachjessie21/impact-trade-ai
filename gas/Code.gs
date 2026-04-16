@@ -288,7 +288,7 @@ function buildPrompt(data) {
   var weightExempt = data.weight_exempt === '符合';
 
   var systemPrompt =
-    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士、Asia Impact Nexus 台灣負責人）的顧問助理。\n' +
+    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士班、Asia Impact Nexus 台灣負責人）的顧問助理。\n' +
     '請以國際貿易策略顧問的專業口吻，用繁體中文撰寫企業主可直接使用的策略報告內容。\n\n' +
     '【語言與語氣規則——違反即重寫】\n' +
     '1. 禁止 AI 腔調：不得出現「值得注意的是」「需要指出的是」「綜上所述」「此外」「總體而言」「不容忽視」「首先」「其次」「最後」等套語\n' +
@@ -669,7 +669,7 @@ function buildEmailHtml(data, claudeText) {
     '<td style="width:33%;padding-right:8px;vertical-align:top;">' +
     '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
     '<div style="font-size:10px;color:#b08830;margin-bottom:2px;">劍橋大學 CISL</div>' +
-    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">永續領導力碩士</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">永續領導力碩士班</div>' +
     '</div></td>' +
     '<td style="width:33%;vertical-align:top;">' +
     '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
@@ -899,7 +899,7 @@ function appendCbamToSheet(data) {
 // ── CBAM Gemini Prompt ──────────────────────────────────────────
 function buildCbamPrompt(data) {
   var systemPrompt =
-    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士、UNDP SDG Impact Standard 認證講師）的顧問助理。\n' +
+    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士班、UNDP SDG Impact Standard 認證講師）的顧問助理。\n' +
     '請以 ESG 策略顧問的專業口吻，用繁體中文撰寫台灣企業主可直接使用的 CBAM 因應報告。\n\n' +
     '【語言與語氣規則——違反即重寫】\n' +
     '1. 禁止 AI 腔調：不得出現「值得注意的是」「需要指出的是」「綜上所述」「此外」「總體而言」「不容忽視」等套語\n' +
@@ -1130,7 +1130,7 @@ function buildCbamEmailHtml(data, claudeText) {
     '<td style="width:33%;padding-right:8px;vertical-align:top;">' +
     '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
     '<div style="font-size:10px;color:#b08830;margin-bottom:2px;">劍橋大學 CISL</div>' +
-    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">永續領導力碩士</div>' +
+    '<div style="font-size:12px;font-weight:700;color:#8a6a00;white-space:nowrap;">永續領導力碩士班</div>' +
     '</div></td>' +
     '<td style="width:33%;vertical-align:top;">' +
     '<div style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);border-radius:8px;padding:8px 12px;">' +
