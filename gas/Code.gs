@@ -679,29 +679,26 @@ function buildEmailHtml(data, claudeText) {
     '</tr></table>' +
     // 三層服務卡片
     '<div style="display:grid;gap:10px;">' +
-    // 輕量 — AI
     '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">輕量級｜AI 關稅診斷</span>' +
-    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,114,0,0.1);color:#FF7200;border-radius:999px;padding:2px 10px;border:1px solid rgba(255,114,0,0.3);">AI</span>' +
+    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">輕量級｜AI × 永續國際發展 策略診斷</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:#fff3cc;color:#8a6a00;border-radius:999px;padding:2px 10px;border:1px solid #e8c860;">60 分鐘</span>' +
     '</div>' +
-    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">用 AI 工具即時分析你的關稅數字、找出最有利的報價與談判策略（60 分鐘諮詢）</p>' +
+    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">釐清關稅衝擊核心問題、找出最佳應對路徑</p>' +
     '</div>' +
-    // 中量 — 永續
     '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">中量級｜永續供應鏈重組</span>' +
-    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(22,163,74,0.1);color:#15803d;border-radius:999px;padding:2px 10px;border:1px solid rgba(22,163,74,0.3);">永續</span>' +
+    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">中量級｜AI × 永續國際發展 方案設計 + 溝通輔導</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:#fff3cc;color:#8a6a00;border-radius:999px;padding:2px 10px;border:1px solid #e8c860;">實作落地</span>' +
     '</div>' +
-    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">從成本結構重算、ESG 供應鏈評估到買家溝通話術，實作落地</p>' +
+    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">從成本重構到買家話術，全程實作</p>' +
     '</div>' +
-    // 重量 — 國際
     '<div style="background:linear-gradient(135deg,#FF7200,#E84000);border-radius:8px;padding:14px 16px;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-    '<span style="font-weight:700;font-size:14px;color:#fff;">重量級｜國際市場佈局</span>' +
-    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">國際</span>' +
+    '<span style="font-weight:700;font-size:14px;color:#fff;">重量級｜AI × 永續國際發展 風險管理 + 市場開拓</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">長期陪跑</span>' +
     '</div>' +
-    '<p style="margin:0;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">市場多元化規劃 × 跨國供應鏈重組 × 長期貿易風險管理陪跑</p>' +
+    '<p style="margin:0;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">供應鏈多元化 × 市場佈局 × 系統性風險管理</p>' +
     '</div>' +
     '</div>' + // grid
     '</div></div>' + // section inner + outer
@@ -1143,27 +1140,24 @@ function buildCbamEmailHtml(data, claudeText) {
     '</tr></table>' +
     // 三層服務卡片
     '<div style="display:grid;gap:10px;">' +
-    // 輕量 — AI
     '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">輕量級｜AI 碳費診斷</span>' +
-    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,114,0,0.1);color:#FF7200;border-radius:999px;padding:2px 10px;border:1px solid rgba(255,114,0,0.3);">AI</span>' +
+    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">輕量級｜AI × 永續國際發展 策略診斷</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:#fff3cc;color:#8a6a00;border-radius:999px;padding:2px 10px;border:1px solid #e8c860;">單次諮詢</span>' +
     '</div>' +
-    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">用 AI 工具即時試算 CBAM 成本、釐清申報義務與初步因應策略（單次諮詢）</p>' +
+    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">CBAM 申報義務釐清、成本試算與初步因應策略</p>' +
     '</div>' +
-    // 中量 — 永續
     '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">中量級｜永續 ESG 策略 + 買家溝通</span>' +
-    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(22,163,74,0.1);color:#15803d;border-radius:999px;padding:2px 10px;border:1px solid rgba(22,163,74,0.3);">永續</span>' +
+    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">中量級｜AI × 永續國際發展 方案設計 + 溝通輔導</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:#fff3cc;color:#8a6a00;border-radius:999px;padding:2px 10px;border:1px solid #e8c860;">實作落地</span>' +
     '</div>' +
     '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">碳排強度認證取得、CBAM 成本分攤談判、歐盟買家溝通話術實作</p>' +
     '</div>' +
-    // 重量 — 國際
     '<div style="background:linear-gradient(135deg,#3B7DD8,#6E5AF0);border-radius:8px;padding:14px 16px;">' +
     '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">' +
-    '<span style="font-weight:700;font-size:14px;color:#fff;">重量級｜國際市場永續競爭力</span>' +
-    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">國際</span>' +
+    '<span style="font-weight:700;font-size:14px;color:#fff;">重量級｜AI × 永續國際發展 風險管理 + 市場開拓</span>' +
+    '<span style="flex-shrink:0;margin-left:12px;font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">長期陪跑</span>' +
     '</div>' +
     '<p style="margin:0;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">碳盤查建置 × 供應鏈低碳轉型 × 歐盟市場長期布局陪跑</p>' +
     '</div>' +
