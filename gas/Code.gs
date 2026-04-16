@@ -368,19 +368,8 @@ function buildPrompt(data) {
     '第二句：說明 Jessie Chang 協助過的企業類型（出口製造商、中小型鋼鋁加工廠），以及她如何幫他們在這類政策衝擊中重新設計成本結構和溝通策略。語氣平直，不用「決策刻不容緩」「契機」「賦能」「全方位」等推銷詞。\n' +
     '服務層次描述由 email 模板負責，你不需要列出服務選項，也不需要 CTA。\n\n' +
 
-    '=== 輸出格式（只輸出以下六個標籤與內容，不得有任何前言或標題）===\n\n' +
-    '[BLOCK1]\n' +
-    '（BLOCK1 內容）\n\n' +
-    '[BLOCK2]\n' +
-    '（BLOCK2 內容）\n\n' +
-    '[BLOCK3]\n' +
-    '（BLOCK3 內容）\n\n' +
-    '[BLOCK4]\n' +
-    '（BLOCK4 內容）\n\n' +
-    '[BLOCK5]\n' +
-    '（BLOCK5 內容）\n\n' +
-    '[BLOCK6]\n' +
-    '（BLOCK6 內容）';
+    '=== 輸出格式（只輸出以下六個標籤與完整內容，不得有任何前言或標題）===\n\n' +
+    '[BLOCK1]\n\n[BLOCK2]\n\n[BLOCK3]\n\n[BLOCK4]\n\n[BLOCK5]\n\n[BLOCK6]';
 
   return { system: systemPrompt, user: userPrompt };
 }
@@ -961,19 +950,8 @@ function buildCbamPrompt(data) {
     '第二句：說明 Jessie Chang 在 CBAM 和碳費政策上的具體工作——幫台灣出口商釐清申報義務、設計與歐盟買家的溝通方案。語氣平直，不用「決策刻不容緩」「契機」「擘劃藍圖」「前瞻性」「全方位」等推銷詞。\n' +
     '服務層次描述由 email 模板負責，你不需要列出服務選項，也不需要 CTA。\n\n' +
 
-    '=== 輸出格式（只輸出以下六個標籤與內容，不得有任何前言或標題）===\n\n' +
-    '[BLOCK1]\n' +
-    '（BLOCK1 內容）\n\n' +
-    '[BLOCK2]\n' +
-    '（BLOCK2 內容）\n\n' +
-    '[BLOCK3]\n' +
-    '（BLOCK3 內容）\n\n' +
-    '[BLOCK4]\n' +
-    '（BLOCK4 內容）\n\n' +
-    '[BLOCK5]\n' +
-    '（BLOCK5 內容）\n\n' +
-    '[BLOCK6]\n' +
-    '（BLOCK6 內容）';
+    '=== 輸出格式（只輸出以下六個標籤與完整內容，不得有任何前言或標題）===\n\n' +
+    '[BLOCK1]\n\n[BLOCK2]\n\n[BLOCK3]\n\n[BLOCK4]\n\n[BLOCK5]\n\n[BLOCK6]';
 
   return { system: systemPrompt, user: userPrompt };
 }
