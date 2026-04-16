@@ -38,7 +38,27 @@ function doPost(e) {
       return jsonResponse({ status: 'error', message: 'unauthorized' });
     }
 
-    // 2. 整理資料（確保所有欄位都有值，避免 Gemini API 或發信出錯）
+    // 2. 依工具類型路由
+    if (payload.tool === 'cbam') {
+      // ── CBAM 碳邊境稅計算器 ──
+      var cbamData = {
+        email:           payload.email           || '',
+        challenge:       payload.challenge        || 'N/A',
+        productCategory: payload.productCategory  || '未填寫',
+        productSub:      payload.productSub       || '未填寫',
+        volume:          payload.volume           || '0',
+        intensity:       payload.intensity        || '0',
+        cbamEur:         payload.cbamEur          || '0',
+        cbamNtd:         payload.cbamNtd          || '0',
+        submittedAt:     payload.submittedAt      || ''
+      };
+      appendCbamToSheet(cbamData);
+      processCbamReport(cbamData);
+      Logger.log('CBAM doPost OK: ' + cbamData.email);
+      return jsonResponse({ status: 'ok', message: 'CBAM report sent.' });
+    }
+
+    // ── 232 關稅計算器（預設）──
     var data = {
       email:            payload.email            || '',
       challenge:        payload.challenge        || 'none',
@@ -59,8 +79,7 @@ function doPost(e) {
     // 3. 記錄到 Google Sheet
     appendToSheet(data);
 
-    // 4. 【方案 A：直接執行】立即生成報告並寄出 Email
-    // 這會呼叫你原本程式碼下方的相關函數
+    // 4. 立即生成報告並寄出 Email
     processAndSendReport(data);
 
     Logger.log('doPost & Report Sent OK: ' + data.email);
@@ -721,4 +740,261 @@ function checkAvailableModels() {
   } catch (e) {
     Logger.log('❌ 發生連線錯誤：' + e.toString());
   }
+}
+
+// ════════════════════════════════════════════════════════════════
+// CBAM 碳邊境稅計算器 — 獨立處理流程
+// ════════════════════════════════════════════════════════════════
+
+// ── CBAM Sheet 記錄 ─────────────────────────────────────────────
+function appendCbamToSheet(data) {
+  try {
+    var sheetId = PropertiesService.getScriptProperties().getProperty('SHEET_ID');
+    if (!sheetId) { Logger.log('SHEET_ID not set, skipping CBAM sheet'); return; }
+
+    var ss = SpreadsheetApp.openById(sheetId);
+    var sheet = ss.getSheetByName('CBAM');
+    if (!sheet) {
+      sheet = ss.insertSheet('CBAM');
+      sheet.appendRow([
+        '時間戳', 'Email', '挑戰痛點',
+        '產品分類', '產品細項', '出口量(噸/年)',
+        '碳排強度(tCO2/噸)', 'CBAM成本(EUR)', 'CBAM成本(NTD)'
+      ]);
+    }
+    sheet.appendRow([
+      Utilities.formatDate(new Date(), 'Asia/Taipei', 'yyyy/MM/dd HH:mm:ss'),
+      data.email, data.challenge,
+      data.productCategory, data.productSub,
+      data.volume, data.intensity,
+      data.cbamEur, data.cbamNtd
+    ]);
+  } catch (err) {
+    Logger.log('appendCbamToSheet error: ' + err.toString());
+  }
+}
+
+// ── CBAM Gemini Prompt ──────────────────────────────────────────
+function buildCbamPrompt(data) {
+  var systemPrompt =
+    '你是覺心營執行長 Jessie Chang（劍橋大學 CISL 永續領導力碩士、UNDP SDG Impact Standard 認證講師）的 AI 顧問助理。\n' +
+    '請以 ESG 策略顧問的專業口吻，用繁體中文撰寫台灣企業主可直接使用的 CBAM 因應報告。\n' +
+    '語氣：精準、務實、有行動力。\n' +
+    '重要規則：\n' +
+    '1. 基於已生效的歐盟法規（Regulation EU 2023/956），不得推測或捏造\n' +
+    '2. CBAM 過渡期 2023-2025 只需申報，2026/10/1 起正式繳費\n' +
+    '3. 台灣企業需透過歐盟進口商（CBAM 申報義務人）間接面對 CBAM\n' +
+    '4. 數字必須與企業資料完全一致';
+
+  var userPrompt =
+    '【格式強制規則 — 最高優先，不得違反】\n' +
+    '1. 輸出必須且只能包含 [BLOCK1] 至 [BLOCK6] 共六個區塊\n' +
+    '2. 每個區塊以 [BLOCK1]、[BLOCK2]...標籤開頭（方括號，大寫，無空格）\n' +
+    '3. 禁止輸出任何報告標題、前言、問候語、介紹文字\n' +
+    '4. 第一個字必須是 [BLOCK1]\n\n' +
+
+    '請為以下台灣出口企業生成 CBAM 六大區塊報告：\n\n' +
+    '【企業 CBAM 計算資料】\n' +
+    '- 產品分類：' + data.productCategory + '\n' +
+    '- 產品細項：' + data.productSub + '\n' +
+    '- 年出口量至歐盟：' + data.volume + ' 噸\n' +
+    '- 碳排放強度：' + data.intensity + ' tCO2/噸\n' +
+    '- 預估年度 CBAM 成本：€' + data.cbamEur + '（約 NTD ' + data.cbamNtd + '）\n' +
+    '- 主要挑戰：' + data.challenge + '\n\n' +
+
+    '[BLOCK1] 執行摘要\n' +
+    '直接點出財務衝擊：年度 CBAM 碳費是多少、相當於每噸產品增加多少成本。\n\n' +
+
+    '[BLOCK2] CBAM 政策架構與台灣現況\n' +
+    '說明三件事：\n' +
+    '① 什麼是 CBAM（歐盟碳邊境調整機制），2026/10/1 起正式繳費\n' +
+    '② 台灣企業的直接義務：由歐盟進口商申報，但成本壓力會轉嫁回台灣供應商\n' +
+    '③ 台灣碳費（2024/1 生效）與 CBAM 的關係：台灣碳費可部分抵扣 CBAM\n\n' +
+
+    '[BLOCK3] 碳排放競爭力分析\n' +
+    '分析此企業的碳排強度（' + data.intensity + ' tCO2/噸）vs 歐盟同類產品基準值（請使用已知的行業數據）。\n' +
+    '說明差距對 CBAM 成本的影響，以及減排每降低 1 tCO2/噸可省多少碳費。\n\n' +
+
+    '[BLOCK4] 三大立即應對策略\n' +
+    '針對挑戰「' + data.challenge + '」，提供三個策略，每個包含：策略名稱、核心做法、預期效益。\n' +
+    '策略方向：碳排放管理（取得碳排強度官方認證）、與歐盟買家談判（碳費分攤）、供應鏈低碳轉型（長期）。\n\n' +
+
+    '[BLOCK5] 30 天立即行動計劃\n' +
+    '三個具體行動（含行動名稱、步驟、預期效果）：\n' +
+    '1. 取得產品碳排放強度認證（向歐盟進口商提供）\n' +
+    '2. 主動與歐盟買家溝通 CBAM 成本分攤方案\n' +
+    '3. 了解台灣碳費申報是否可作為 CBAM 抵扣\n\n' +
+
+    '[BLOCK6] 覺心營 ESG 顧問服務\n' +
+    '說明面對 CBAM，企業需要系統性 ESG 策略，不只是計算碳費。\n' +
+    '帶出 Jessie Chang 的背景（UNDP SDG Impact Standard 認證講師、劍橋大學 CISL 永續領導力碩士、Asia Impact Nexus 台灣負責人）。\n' +
+    '提供三個層次的服務（輕/中/重），並附上諮詢邀請。';
+
+  return { system: systemPrompt, user: userPrompt };
+}
+
+// ── CBAM 報告生成與寄信 ─────────────────────────────────────────
+function processCbamReport(data) {
+  try {
+    var prompt = buildCbamPrompt(data);
+    var fullPrompt = prompt.system + '\n\n---\n\n' + prompt.user;
+
+    var maxRetries = 3;
+    var models = ['gemini-2.5-flash', 'gemini-2.5-flash-lite', 'gemini-2.0-flash-001'];
+    var report = null;
+
+    for (var m = 0; m < models.length; m++) {
+      for (var i = 0; i < maxRetries; i++) {
+        try {
+          var apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
+          var response = UrlFetchApp.fetch(
+            'https://generativelanguage.googleapis.com/v1/models/' + models[m] + ':generateContent?key=' + apiKey,
+            {
+              method: 'post',
+              headers: { 'Content-Type': 'application/json' },
+              payload: JSON.stringify({
+                contents: [{ parts: [{ text: fullPrompt }] }],
+                generationConfig: { temperature: 0.4, maxOutputTokens: 2048 }
+              }),
+              muteHttpExceptions: true
+            }
+          );
+          var code = response.getResponseCode();
+          if (code === 429 || code === 503) {
+            Logger.log('CBAM ⚠️ ' + models[m] + ' ' + code + '，重試 ' + (i+1));
+            Utilities.sleep(2000 * (i + 1));
+            continue;
+          }
+          var result = JSON.parse(response.getContentText());
+          if (result.error) throw new Error(result.error.message);
+          if (result.candidates && result.candidates[0].content) {
+            report = result.candidates[0].content.parts[0].text;
+            break;
+          }
+        } catch (err) {
+          if (i === maxRetries - 1) { Logger.log('CBAM 模型 ' + models[m] + ' 失敗'); break; }
+          Utilities.sleep(2000);
+        }
+      }
+      if (report) break;
+    }
+
+    if (!report) throw new Error('所有模型均失敗');
+
+    var blocks = parseBlocks(report);
+    if (!validateReport(blocks)) {
+      Logger.log('⚠️ CBAM 報告品質不合格，通知 Jessie');
+      GmailApp.sendEmail('jessie@ahbase.com',
+        '【⚠️ CBAM 報告品質不合格】' + data.email, '',
+        { htmlBody: '<p style="color:#E84000;font-weight:bold;">CBAM 報告未達標，請手動處理。</p>' +
+          '<p><b>客戶：</b>' + data.email + '</p>' +
+          '<p><b>產品：</b>' + data.productCategory + ' / ' + data.productSub + '</p>' +
+          '<pre style="background:#f5f5f5;padding:12px;font-size:12px;">' + (report || '空白') + '</pre>',
+          name: 'Impact Trade AI 系統', replyTo: 'jessie@ahbase.com' });
+      return;
+    }
+
+    GmailApp.sendEmail(
+      data.email,
+      '【覺心營】你的 CBAM 碳邊境稅衝擊與 ESG 應對報告',
+      '請以 HTML 格式查看此郵件。',
+      {
+        htmlBody: buildCbamEmailHtml(data, report),
+        name: 'Jessie Chang · 覺心營',
+        replyTo: 'jessie@ahbase.com'
+      }
+    );
+    Logger.log('✅ CBAM 報告已寄出至：' + data.email);
+
+  } catch (err) {
+    Logger.log('processCbamReport error: ' + err.toString());
+    try {
+      GmailApp.sendEmail('jessie@ahbase.com',
+        '【⚠️ CBAM 系統錯誤】' + data.email, '',
+        { htmlBody: '<p style="color:#E84000;font-weight:bold;">CBAM 報告生成失敗。</p>' +
+          '<p><b>客戶：</b>' + data.email + '</p><p><b>錯誤：</b>' + err.toString() + '</p>',
+          name: 'Impact Trade AI 系統', replyTo: 'jessie@ahbase.com' });
+    } catch(e) {}
+  }
+}
+
+// ── CBAM Email HTML ─────────────────────────────────────────────
+function buildCbamEmailHtml(data, claudeText) {
+  var blocks = parseBlocks(claudeText);
+  var dateStr = Utilities.formatDate(new Date(), 'Asia/Taipei', 'yyyy/MM/dd');
+
+  function section(title, content, color) {
+    return (
+      '<div style="background:#fff;border-radius:10px;padding:22px;margin-bottom:16px;border:1px solid #e8e0d8;">' +
+      '<p style="font-size:11px;font-weight:700;color:' + (color || '#3B7DD8') + ';text-transform:uppercase;letter-spacing:2px;margin:0 0 10px;">' + title + '</p>' +
+      '<div style="font-size:15px;line-height:1.85;color:#1a1a2e;">' + content.replace(/\n/g, '<br>') + '</div>' +
+      '</div>'
+    );
+  }
+
+  return (
+    '<div style="font-family:\'Noto Sans TC\',Arial,sans-serif;max-width:640px;margin:0 auto;color:#1a1a2e;">' +
+    '<div style="height:5px;background:linear-gradient(135deg,#3B7DD8,#6E5AF0);border-radius:12px 12px 0 0;"></div>' +
+    '<div style="background:#f9f9f7;border:1px solid #e8e0d8;border-top:none;border-radius:0 0 12px 12px;padding:36px;">' +
+
+    '<div style="margin-bottom:20px;">' +
+    '<img src="https://impact-trade-ai.pages.dev/ahbase-logo.png" alt="覺心營" style="height:48px;width:auto;display:block;">' +
+    '</div>' +
+    '<h1 style="font-size:20px;font-weight:700;color:#1a1a2e;margin:0 0 4px;">CBAM 碳邊境稅衝擊與 ESG 應對策略報告</h1>' +
+    '<p style="color:#6b6b80;font-size:12px;margin:0 0 28px;">由 Jessie Chang · 覺心營 為你個人化準備 · ' + dateStr + '</p>' +
+
+    '<div style="background:#fff;border-radius:10px;padding:20px;margin-bottom:16px;border:1px solid #e8e0d8;">' +
+    '<p style="font-size:11px;font-weight:700;color:#3B7DD8;text-transform:uppercase;letter-spacing:2px;margin:0 0 12px;">CBAM 成本數據</p>' +
+    '<table style="width:100%;font-size:14px;border-collapse:collapse;">' +
+    '<tr><td style="color:#6b6b80;padding:6px 0;border-bottom:1px solid #f0ece8;">產品分類</td>' +
+    '<td style="text-align:right;padding:6px 0;border-bottom:1px solid #f0ece8;">' + data.productCategory + '</td></tr>' +
+    '<tr><td style="color:#6b6b80;padding:6px 0;border-bottom:1px solid #f0ece8;">年出口量</td>' +
+    '<td style="text-align:right;padding:6px 0;border-bottom:1px solid #f0ece8;">' + data.volume + ' 噸</td></tr>' +
+    '<tr><td style="color:#6b6b80;padding:6px 0;border-bottom:1px solid #f0ece8;">碳排放強度</td>' +
+    '<td style="text-align:right;padding:6px 0;border-bottom:1px solid #f0ece8;">' + data.intensity + ' tCO₂/噸</td></tr>' +
+    '<tr><td style="color:#6b6b80;padding:6px 0;border-bottom:1px solid #f0ece8;">預估年度 CBAM 成本</td>' +
+    '<td style="text-align:right;padding:6px 0;border-bottom:1px solid #f0ece8;color:#3B7DD8;font-weight:700;">€' + data.cbamEur + '</td></tr>' +
+    '<tr><td style="color:#6b6b80;padding:6px 0;">折合新台幣</td>' +
+    '<td style="text-align:right;padding:6px 0;font-weight:700;">NTD ' + data.cbamNtd + '</td></tr>' +
+    '</table></div>' +
+
+    section('一、執行摘要', blocks.b1 || '') +
+    section('二、CBAM 政策架構與台灣現況', blocks.b2 || '', '#6E5AF0') +
+    section('三、碳排放競爭力分析', blocks.b3 || '', '#3B7DD8') +
+    section('四、三大立即應對策略', blocks.b4 || '') +
+    section('五、30 天行動計劃', blocks.b5 || '') +
+    section('六、覺心營 ESG 顧問服務', blocks.b6 || '', '#C9A84C') +
+
+    '<a href="https://calendar.app.google/yz9edJxyySbihWEy6" ' +
+    'style="display:block;background:linear-gradient(135deg,#3B7DD8,#6E5AF0);color:#fff;' +
+    'text-align:center;padding:16px;border-radius:999px;text-decoration:none;font-weight:700;' +
+    'font-size:15px;letter-spacing:1px;margin-bottom:8px;">預約免費 ESG 策略諮詢 →</a>' +
+    '<p style="text-align:center;font-size:12px;color:#a0a0b8;margin:0 0 24px;">' +
+    'UNDP SDG Impact Standard 認證講師｜劍橋大學 永續領導力碩士班｜Asia Impact Nexus 台灣負責人</p>' +
+
+    '<p style="font-size:11px;color:#a0a0b8;text-align:center;margin:0;">' +
+    '© 2026 覺心營股份有限公司 · Jessie Chang · jessie@ahbase.com<br>' +
+    '本報告僅供參考，實際 CBAM 成本以歐盟官方 CBAM 登記系統及進口商申報為準。' +
+    '</p>' +
+    '</div></div>'
+  );
+}
+
+// ── CBAM 測試資料與測試函數 ──────────────────────────────────────
+var CBAM_TEST_DATA = {
+  email:           'jessie@ahbase.com',
+  challenge:       '歐盟買家詢問碳費如何分攤',
+  productCategory: '鋼鐵（Steel）',
+  productSub:      '熱軋鋼板',
+  volume:          '500',
+  intensity:       '1.8',
+  cbamEur:         '4500',
+  cbamNtd:         '162000'
+};
+
+function step_cbam_test() {
+  appendCbamToSheet(CBAM_TEST_DATA);
+  Logger.log('CBAM Sheet 記錄完成');
+  processCbamReport(CBAM_TEST_DATA);
+  Logger.log('CBAM 測試完成，請查收 email');
 }
