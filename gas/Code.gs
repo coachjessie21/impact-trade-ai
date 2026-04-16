@@ -336,8 +336,11 @@ function buildPrompt(data) {
 
 function callGeminiAPI(data) {
   var maxRetries = 3;
-  var sleepTime = 2000; // 初始等待 2 秒
+  var sleepTime = 2000;
+  // 主力模型 → 備援模型（2.5-flash 過載時自動切換）
+  var models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
 
+  for (var m = 0; m < models.length; m++) {
   for (var i = 0; i < maxRetries; i++) {
     try {
       var apiKey = PropertiesService.getScriptProperties().getProperty('GEMINI_API_KEY');
@@ -345,7 +348,7 @@ function callGeminiAPI(data) {
       var fullPrompt = prompt.system + '\n\n---\n\n' + prompt.user;
 
       var response = UrlFetchApp.fetch(
-        'https://generativelanguage.googleapis.com/v1/models/gemini-2.5-flash:generateContent?key=' + apiKey,
+        'https://generativelanguage.googleapis.com/v1/models/' + models[m] + ':generateContent?key=' + apiKey,
         {
           method: 'post',
           headers: { 'Content-Type': 'application/json' },
@@ -360,10 +363,10 @@ function callGeminiAPI(data) {
       var responseCode = response.getResponseCode();
       var raw = response.getContentText();
 
-      // 處理頻率限制 (429)
-      if (responseCode === 429) {
-        Logger.log('⚠️ 遇到 429 錯誤（配額用罄），第 ' + (i+1) + ' 次重試...');
-        Utilities.sleep(sleepTime * (i + 1)); 
+      // 處理過載 (429/503)
+      if (responseCode === 429 || responseCode === 503) {
+        Logger.log('⚠️ 模型 ' + models[m] + ' 回傳 ' + responseCode + '，第 ' + (i+1) + ' 次重試...');
+        Utilities.sleep(sleepTime * (i + 1));
         continue;
       }
 
@@ -392,11 +395,16 @@ function callGeminiAPI(data) {
       throw new Error('❌ API 回傳內容結構不符預期，原始內容：' + raw.substring(0, 200));
 
     } catch (err) {
-      if (i === maxRetries - 1) throw err;
+      if (i === maxRetries - 1) {
+        Logger.log('模型 ' + models[m] + ' 失敗，切換備援模型...');
+        break; // 跳出內層，試下一個模型
+      }
       Logger.log('重試中... 錯誤原因: ' + err.toString());
       Utilities.sleep(sleepTime);
     }
   }
+  } // 外層模型迴圈結束
+  throw new Error('❌ 所有模型均失敗，請稍後再試。');
 }
 
 
