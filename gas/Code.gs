@@ -933,9 +933,10 @@ function buildCbamPrompt(data) {
     '3. 了解台灣碳費申報是否可作為 CBAM 抵扣\n\n' +
 
     '【BLOCK6 — 覺心營 ESG 顧問服務】\n' +
-    '說明面對 CBAM，企業需要系統性 ESG 策略，不只是計算碳費。\n' +
-    '帶出 Jessie Chang 的背景（UNDP SDG Impact Standard 認證講師、劍橋大學 CISL 永續領導力碩士、Asia Impact Nexus 台灣負責人）。\n' +
-    '提供三個層次的服務（輕/中/重），並附上諮詢邀請。\n\n' +
+    '只寫 2 句話，不多不少：\n' +
+    '第一句：針對這份報告的具體數字（年度 CBAM 成本、每噸成本增加），直接點出企業現在面臨的決策關口。禁止「誠摯邀請」「擘劃藍圖」「前瞻性」等套語。\n' +
+    '第二句：說明 Jessie Chang 的核心專長是幫台灣出口企業把碳費壓力轉化為供應鏈升級和歐盟市場談判優勢，而不是泛用的「ESG 策略」。\n' +
+    '服務層次描述由 email 模板負責，你不需要列出服務選項，也不需要 CTA。\n\n' +
 
     '=== 輸出格式（只輸出以下六個標籤與內容，不得有任何前言或標題）===\n\n' +
     '[BLOCK1]\n' +
@@ -1085,7 +1086,42 @@ function buildCbamEmailHtml(data, claudeText) {
     section('三、碳排放競爭力分析', blocks.b3 || '', '#3B7DD8') +
     section('四、三大立即應對策略', blocks.b4 || '') +
     section('五、30 天行動計劃', blocks.b5 || '') +
-    section('六、覺心營 ESG 顧問服務', blocks.b6 || '', '#C9A84C') +
+    // Block 6 — 覺心營 ESG 顧問服務（精裝版）
+    '<div style="border-radius:10px;overflow:hidden;margin-bottom:16px;border:1px solid #e8c860;">' +
+    '<div style="background:linear-gradient(135deg,#fffbea,#fff8d6);padding:24px 24px 20px;">' +
+    '<p style="font-size:11px;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:2px;margin:0 0 14px;">六、覺心營 ESG 顧問服務</p>' +
+    '<div style="font-size:15px;color:#1a1a2e;line-height:1.85;margin-bottom:20px;">' + renderMarkdown(blocks.b6 || '') + '</div>' +
+    // 資歷條
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">' +
+    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">UNDP SDG Impact Standard 認證講師</span>' +
+    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">劍橋大學 CISL 永續領導力碩士</span>' +
+    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">Asia Impact Nexus 台灣負責人</span>' +
+    '</div>' +
+    // 三層服務卡片
+    '<div style="display:grid;gap:10px;">' +
+    '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">輕量級｜CBAM 成本診斷</span>' +
+    '<span style="font-size:11px;background:#fff3cc;color:#8a6a00;border-radius:999px;padding:2px 10px;border:1px solid #e8c860;">單次諮詢</span>' +
+    '</div>' +
+    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">CBAM 申報義務釐清、成本試算與初步因應策略</p>' +
+    '</div>' +
+    '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">中量級｜ESG 策略設計 + 買家溝通</span>' +
+    '<span style="font-size:11px;background:#fff3cc;color:#8a6a00;border-radius:999px;padding:2px 10px;border:1px solid #e8c860;">實作落地</span>' +
+    '</div>' +
+    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">碳排強度認證取得、碳費分攤談判方案、買家溝通話術</p>' +
+    '</div>' +
+    '<div style="background:linear-gradient(135deg,#3B7DD8,#6E5AF0);border-radius:8px;padding:14px 16px;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+    '<span style="font-weight:700;font-size:14px;color:#fff;">重量級｜永續轉型 + 供應鏈管理</span>' +
+    '<span style="font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">長期陪跑</span>' +
+    '</div>' +
+    '<p style="margin:0;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">碳盤查建置 × 供應鏈低碳轉型 × 永續金融與 ESG 評級</p>' +
+    '</div>' +
+    '</div>' + // grid
+    '</div></div>' + // section inner + outer
 
     '<a href="https://calendar.app.google/yz9edJxyySbihWEy6" ' +
     'style="display:block;background:linear-gradient(135deg,#3B7DD8,#6E5AF0);color:#fff;' +
