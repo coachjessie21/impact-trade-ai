@@ -999,3 +999,19 @@ function step_cbam_test() {
   processCbamReport(CBAM_TEST_DATA);
   Logger.log('CBAM 測試完成，請查收 email');
 }
+
+// 補發 lyipei@gmail.com 的報告（扣件 Fasteners CN 7318）
+function resend_lyipei_cbam() {
+  var data = {
+    email:           'lyipei@gmail.com',
+    challenge:       '歐盟買家詢問碳費如何分攤',
+    productCategory: '扣件 Fasteners（CN 7318）',
+    productSub:      '台灣鋼製扣件（螺絲/螺栓/螺帽）',
+    volume:          '300',
+    intensity:       '1.85',
+    cbamEur:         '37,185',
+    cbamNtd:         '1,264,290'
+  };
+  processCbamReport(data);
+  Logger.log('lyipei 補發完成');
+}
