@@ -1,0 +1,29 @@
+name: Sync GAS
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'gas/**'
+
+jobs:
+  push-to-gas:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Install clasp
+        run: npm install -g @google/clasp
+
+      - name: Write clasp credentials
+        run: echo '${{ secrets.CLASPRC_JSON }}' > ~/.clasprc.json
+
+      - name: Push to GAS
+        run: |
+          cd gas
+          clasp push --force

@@ -3,3 +3,4 @@ node_modules/
 .netlify/
 .claude/
 *.docx
+.clasprc.json
