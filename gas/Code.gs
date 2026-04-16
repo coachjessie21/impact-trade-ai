@@ -73,20 +73,53 @@ function doPost(e) {
 }
 
 // 為了讓結構清晰，請在 doPost 下方新增這個 processAndSendReport 函數
+// ── 品質驗證：確認六大區塊都有實質內容（每區塊至少 80 字）────
+function validateReport(blocks) {
+  for (var i = 1; i <= 6; i++) {
+    var block = blocks['b' + i];
+    if (!block || block.trim().length < 80) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function processAndSendReport(data) {
   try {
     // 呼叫 Gemini API 產生文字報告
-    var report = callGeminiAPI(data);        
-    
+    var report = callGeminiAPI(data);
+    var blocks = parseBlocks(report);
+
+    // ── 品質關卡：任何區塊為空或過短 → 不寄客戶，改發警報給 Jessie ──
+    if (!validateReport(blocks)) {
+      Logger.log('⚠️ 報告品質不合格，已攔截，通知 Jessie 手動處理。');
+      GmailApp.sendEmail(
+        'jessie@ahbase.com',
+        '【⚠️ 需人工處理】232 報告品質不合格 — ' + data.email,
+        '',
+        {
+          htmlBody:
+            '<p style="font-family:Arial;color:#E84000;font-weight:bold;">報告品質未達標，已攔截，請手動處理。</p>' +
+            '<p><b>客戶 Email：</b>' + data.email + '</p>' +
+            '<p><b>產品分類：</b>' + data.product_category + '</p>' +
+            '<p><b>Gemini 原始輸出：</b></p>' +
+            '<pre style="background:#f5f5f5;padding:12px;font-size:12px;white-space:pre-wrap;">' + (report || '（空白）') + '</pre>',
+          name: 'Impact Trade AI 系統',
+          replyTo: 'jessie@ahbase.com'
+        }
+      );
+      return;
+    }
+
     // 生成 PDF 報告（需有 TEMPLATE_DOC_ID）
-    var pdfBlob = generateReport(data, report); 
+    var pdfBlob = generateReport(data, report);
 
     var mailOpts = {
       htmlBody: buildEmailHtml(data, report),
       name:     'Jessie Chang · 覺心營',
       replyTo:  'jessie@ahbase.com'
     };
-    
+
     // 如果 PDF 生成成功就加入附件
     if (pdfBlob) mailOpts.attachments = [pdfBlob];
 
@@ -97,19 +130,27 @@ function processAndSendReport(data) {
       '請以 HTML 格式查看此郵件。',
       mailOpts
     );
-    
+    Logger.log('✅ 報告品質合格，已寄出至：' + data.email);
+
   } catch (err) {
     Logger.log('processAndSendReport error: ' + err.toString());
-    // 如果中間出錯（例如 API 429），至少發一封通知信給使用者
+    // 錯誤時只通知 Jessie，不寄任何內容給客戶
     try {
       GmailApp.sendEmail(
-        data.email,
-        '【覺心營】你的 232 關稅衝擊策略報告（處理中）',
-        '感謝你使用 Impact Trade AI。由於系統流量較大，Jessie Chang 將儘速與你聯繫並提供報告。',
-        { name: 'Jessie Chang · 覺心營', replyTo: 'jessie@ahbase.com' }
+        'jessie@ahbase.com',
+        '【⚠️ 系統錯誤】232 報告生成失敗 — ' + data.email,
+        '',
+        {
+          htmlBody:
+            '<p style="font-family:Arial;color:#E84000;font-weight:bold;">報告生成失敗，請手動聯繫客戶。</p>' +
+            '<p><b>客戶 Email：</b>' + data.email + '</p>' +
+            '<p><b>錯誤訊息：</b>' + err.toString() + '</p>',
+          name: 'Impact Trade AI 系統',
+          replyTo: 'jessie@ahbase.com'
+        }
       );
     } catch (e) {
-      Logger.log('Fallback email failed: ' + e.toString());
+      Logger.log('Alert email failed: ' + e.toString());
     }
   }
 }
