@@ -358,15 +358,10 @@ function buildPrompt(data) {
     '行動範圍：重新核算成本結構、買家溝通策略、供應鏈或市場多元化評估。\n\n' +
 
     '【BLOCK6 — 下一步：覺心營顧問服務】\n' +
-    '語氣：直接、務實，像顧問告訴董事會「現在要做什麼」，禁止銷售文案腔（禁用「誠摯邀請」「擘劃藍圖」「攜手共創」「賦能」等詞）。\n' +
-    '寫法：\n' +
-    '第一句：直接點出這份報告揭露的核心問題（用具體數字），說明光靠計算器不夠、需要後續行動。\n' +
-    '第二句：說明 Jessie Chang 能提供的是什麼——具體點出：國際貿易談判策略、UNDP SDG Impact Standard 認證、劍橋大學 CISL 永續領導力碩士、Asia Impact Nexus 台灣負責人。\n' +
-    '服務選項（三層，條列式）：\n' +
-    '・輕量級「策略診斷」：60 分鐘，釐清你的關稅衝擊和最佳應對路徑\n' +
-    '・中量級「方案設計與溝通輔導」：從成本重構到買家溝通話術，實作落地\n' +
-    '・重量級「全面性風險管理與市場開拓」：長期陪跑，含供應鏈與市場多元化\n' +
-    '結尾：一句話，直接邀請預約免費初步諮詢，不用堆砌形容詞。\n\n' +
+    '只寫 2 句話，不多不少：\n' +
+    '第一句：針對這份報告的具體數字（關稅增幅、損益影響），直接點出企業現在面臨的決策關口。禁止「面對如此衝擊」「誠摯邀請」「擘劃藍圖」等套語。\n' +
+    '第二句：說明 Jessie Chang 的核心專長是幫企業把關稅壓力轉化為談判優勢和供應鏈重組機會，而不是泛用的「系統性策略」。\n' +
+    '服務層次描述由 email 模板負責，你不需要列出三層服務，也不需要 CTA。\n\n' +
 
     '=== 輸出格式（只輸出以下六個標籤與內容，不得有任何前言或標題）===\n\n' +
     '[BLOCK1]\n' +
@@ -648,7 +643,42 @@ function buildEmailHtml(data, claudeText) {
     section('三、利潤壓力分析', blocks.b3 || '（AI 生成中）', isLoss ? '#E84000' : '#FF7200') +
     section('四、談判話術（立即可用）', blocks.b4 || '（AI 生成中）') +
     section('五、30 天行動計劃', blocks.b5 || '（AI 生成中）') +
-    section('六、覺心營的下一步', blocks.b6 || '（AI 生成中）', '#C9A84C') +
+    // Block 6 — 覺心營顧問服務（精裝版）
+    '<div style="border-radius:10px;overflow:hidden;margin-bottom:16px;border:1px solid #e8c860;">' +
+    '<div style="background:linear-gradient(135deg,#fffbea,#fff8d6);padding:24px 24px 20px;">' +
+    '<p style="font-size:11px;font-weight:700;color:#C9A84C;text-transform:uppercase;letter-spacing:2px;margin:0 0 14px;">六、覺心營的下一步</p>' +
+    '<div style="font-size:15px;color:#1a1a2e;line-height:1.85;margin-bottom:20px;">' + renderMarkdown(blocks.b6 || '') + '</div>' +
+    // 資歷條
+    '<div style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:20px;">' +
+    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">UNDP SDG Impact Standard 認證講師</span>' +
+    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">劍橋大學 CISL 永續領導力碩士</span>' +
+    '<span style="font-size:11px;background:rgba(201,168,76,0.15);color:#8a6a00;border:1px solid rgba(201,168,76,0.4);border-radius:999px;padding:4px 12px;">Asia Impact Nexus 台灣負責人</span>' +
+    '</div>' +
+    // 三層服務卡片
+    '<div style="display:grid;gap:10px;">' +
+    '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">輕量級｜策略診斷</span>' +
+    '<span style="font-size:11px;background:#fff3cc;color:#8a6a00;border-radius:999px;padding:2px 10px;border:1px solid #e8c860;">60 分鐘</span>' +
+    '</div>' +
+    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">釐清關稅衝擊核心問題、找出最佳應對路徑</p>' +
+    '</div>' +
+    '<div style="background:#fff;border-radius:8px;padding:14px 16px;border:1px solid #ede0b0;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+    '<span style="font-weight:700;font-size:14px;color:#1a1a2e;">中量級｜方案設計 + 溝通輔導</span>' +
+    '<span style="font-size:11px;background:#fff3cc;color:#8a6a00;border-radius:999px;padding:2px 10px;border:1px solid #e8c860;">實作落地</span>' +
+    '</div>' +
+    '<p style="margin:0;font-size:13px;color:#6b6b80;line-height:1.7;">從成本重構到買家話術，全程實作</p>' +
+    '</div>' +
+    '<div style="background:linear-gradient(135deg,#FF7200,#E84000);border-radius:8px;padding:14px 16px;">' +
+    '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;">' +
+    '<span style="font-weight:700;font-size:14px;color:#fff;">重量級｜全面風險管理 + 市場開拓</span>' +
+    '<span style="font-size:11px;background:rgba(255,255,255,0.25);color:#fff;border-radius:999px;padding:2px 10px;">長期陪跑</span>' +
+    '</div>' +
+    '<p style="margin:0;font-size:13px;color:rgba(255,255,255,0.85);line-height:1.7;">供應鏈多元化 × 市場佈局 × 系統性風險管理</p>' +
+    '</div>' +
+    '</div>' + // grid
+    '</div></div>' + // section inner + outer
 
     // 官方資料來源
     '<div style="background:#f0f0f8;border-radius:10px;padding:16px;margin-bottom:20px;">' +
