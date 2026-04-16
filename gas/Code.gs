@@ -337,8 +337,8 @@ function buildPrompt(data) {
 function callGeminiAPI(data) {
   var maxRetries = 3;
   var sleepTime = 2000;
-  // 主力模型 → 備援模型（2.5-flash 過載時自動切換）
-  var models = ['gemini-2.0-flash', 'gemini-1.5-flash'];
+  // 主力模型 → 備援模型（均使用 v1beta endpoint）
+  var models = ['gemini-2.0-flash', 'gemini-1.5-flash-latest'];
 
   for (var m = 0; m < models.length; m++) {
   for (var i = 0; i < maxRetries; i++) {
@@ -348,7 +348,7 @@ function callGeminiAPI(data) {
       var fullPrompt = prompt.system + '\n\n---\n\n' + prompt.user;
 
       var response = UrlFetchApp.fetch(
-        'https://generativelanguage.googleapis.com/v1/models/' + models[m] + ':generateContent?key=' + apiKey,
+        'https://generativelanguage.googleapis.com/v1beta/models/' + models[m] + ':generateContent?key=' + apiKey,
         {
           method: 'post',
           headers: { 'Content-Type': 'application/json' },
