@@ -637,7 +637,15 @@ function step2_checkGeminiOutput() {
 
 // ★ 步驟三：實際寄一封測試報告到你的 email，確認排版與內容
 function step3_sendTestEmail() {
-  var report  = callGeminiAPI(TEST_DATA);
+  var report = callGeminiAPI(TEST_DATA);
+  var blocks = parseBlocks(report);
+
+  // 品質檢查：區塊不足就停止，不寄爛報告
+  if (!validateReport(blocks)) {
+    Logger.log('❌ 品質不合格，停止寄送。Gemini 原始輸出：\n' + report);
+    return;
+  }
+
   var pdfBlob = generateReport(TEST_DATA, report);
   var mailOpts = {
     htmlBody: buildEmailHtml(TEST_DATA, report),
@@ -652,7 +660,7 @@ function step3_sendTestEmail() {
     '請以 HTML 格式查看此郵件。',
     mailOpts
   );
-  Logger.log('測試 email 已寄出至 ' + TEST_DATA.email);
+  Logger.log('✅ 測試 email 已寄出至 ' + TEST_DATA.email);
   Logger.log('（確認 email 無誤後，即可部署 Webhook 正式上線）');
 }
 
